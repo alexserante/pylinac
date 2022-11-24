@@ -6,7 +6,7 @@ from tkinter.filedialog import askdirectory
 from pylinac import WinstonLutz
 
 
-def handle_click(event):
+def rename_files(event):
 
     # user select the directory of the images
     main_path = askdirectory(title='Select folder')
@@ -24,21 +24,27 @@ def handle_click(event):
         for filename in filenames:
             print('FILE INSIDE ' + folderName + ': ' + filename)
 
-            if filename == "DICOMDIR":
-                os.remove(folderName + '/' + filename)
-
             if filename != "DICOMDIR":
                 file_path = folderName + '/' + filename
 
                 print('MOVED TO: ' + main_path + "/" + "gantry" +
                       str(gantry[n]) + "coll" + str(colimator[n]) +
                       "couch" + str(couch[n]) + ".dcm" + "\n")
-                
+
                 # move the file to the main path
                 shutil.move(file_path, main_path + "/" + "gantry" +
                             str(gantry[n]) + "coll" + str(colimator[n]) +
                             "couch" + str(couch[n]) + ".dcm")
                 n = n + 1
+
+    for folderName, subfolders, filenames in os.walk(main_path, topdown=False):
+        for subfolder in subfolders:
+            print('FILE INSIDE ' + folderName + ': ' + filename)
+            os.rmdir(os.path.join(main_path, subfolder))
+            for filename in filenames:
+                print('FILE INSIDE ' + folderName + ': ' + filename)
+                if filename == "DICOMDIR":
+                    os.remove(os.path.join(subfolder, filename))
 
     '''# print files in main_path
         onlyfiles = [f for f in os.listdir(
@@ -72,7 +78,7 @@ lbl_select_folder.grid(row=0, column=0)
 
 button = tk.Button(master=frm_select_folder,
                    text="Selecionar pasta", font="VERDANA")
-button.bind("<Button-1>", handle_click)
+button.bind("<Button-1>", rename_files)
 button.grid(row=1, column=0)
 
 # Frame to choose from which LINAC the WL was run
