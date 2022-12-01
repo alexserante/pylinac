@@ -91,6 +91,7 @@ def analyze_wl():
     wl = WinstonLutz(main_path, use_filenames=True)
     wl.analyze(bb_size_mm=8)
     print(wl.results())
+    wl.plot_summary()
 
 
 def show_images():
@@ -105,11 +106,11 @@ def save_pdf():
     pass
 
 
-# ########################################################## #
-#                                                            #
-#                         MAIN PROGRAM                       #
-#                                                            #
-# ########################################################## #
+# ########################################################################### #
+#                                                                             #
+#                                 MAIN PROGRAM                                #
+#                                                                             #
+# ########################################################################### #
 
 
 window = tk.Tk()
@@ -131,7 +132,7 @@ button = tk.Button(master=frm_select_folder,
 button.grid(row=1, column=0)
 
 # Frame to choose from which LINAC the WL was run
-frm_select_linac = tk.Frame(master=window, borderwidth=1, relief="raised")
+'''frm_select_linac = tk.Frame(master=window, borderwidth=1, relief="raised")
 frm_select_linac.grid(row=0, column=1)
 
 var_linac = ""
@@ -143,7 +144,7 @@ rbtn_linac_6 = tk.Radiobutton(
     master=frm_select_linac, text="AL6", variable=var_linac, value="AL6")
 rbtn_linac_4.grid(row=0, column=0)
 rbtn_linac_5.grid(row=1, column=0)
-rbtn_linac_6.grid(row=2, column=0)
+rbtn_linac_6.grid(row=2, column=0)'''
 
 frm_perform_analysis = tk.LabelFrame(
     master=window, text="WL analysis", font="VERDANA")
@@ -160,7 +161,7 @@ btn_show_images = tk.Button(
 btn_show_images.grid(row=1, column=0)
 
 btn_plot_summary = tk.Button(
-    master=frm_perform_analysis, text="Mostrar imagens", font="VERDANA",
+    master=frm_perform_analysis, text="Plotar gráficos", font="VERDANA",
     command=show_plots)
 btn_plot_summary.grid(row=2, column=0)
 
