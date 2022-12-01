@@ -97,6 +97,10 @@ def show_images():
     wl.plot_images()
 
 
+def show_plots():
+    wl.plot_summary()
+
+
 def save_pdf():
     pass
 
@@ -154,5 +158,10 @@ btn_show_images = tk.Button(
     master=frm_perform_analysis, text="Mostrar imagens", font="VERDANA",
     command=show_images)
 btn_show_images.grid(row=1, column=0)
+
+btn_plot_summary = tk.Button(
+    master=frm_perform_analysis, text="Mostrar imagens", font="VERDANA",
+    command=show_plots)
+btn_plot_summary.grid(row=2, column=0)
 
 window.mainloop()
