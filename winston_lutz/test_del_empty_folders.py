@@ -1,23 +1,25 @@
 import os
 import os.path
 import shutil
+import re
 import tkinter as tk
 from tkinter.filedialog import askdirectory
 
 
-def move_files_from_subfolders_into_main_path(main_path):
-
-    for folder, subfolders, files in os.walk(main_path, topdown=False):
-        # 1. Move files to main folder (out of subfolders:)
-        for name in files:
-            os.system('move "' + os.path.join(folder, name) + '" "' + main_path +
-                      '\\' + os.path.join(name) + '"')  # note \\ at the end
-
-    # 2. Delete empty folders
-    folders = list(os.walk(main_path, topdown=False))
-    for folder in folders:
-        if not folder[2]:
-            os.rmdir(folder[0])
+def test_function(main_path):
+    gantry = [0, 90, 180, 270, 0, 0, 0, 0]
+    lenght = len(gantry)
+    n = 0
+    for folderName, subfolders, filenames in os.walk(main_path):
+        for filename in filenames:
+            if re.search("^gantry", filename):
+                print("Imagens já formatadas!")
+                return
+            if re.search("^[0-9]+", filename):
+                print('FILE INSIDE ' + folderName + ': ' + filename)
+                n = n + 1
+    print(n)
+    print(lenght)
 
 
 
@@ -27,4 +29,4 @@ main_path = askdirectory(title='Select folder')
     print("Nenhuma pasta selecionada!")
     return'''
 
-move_files_from_subfolders_into_main_path(main_path)
+test_function(main_path)

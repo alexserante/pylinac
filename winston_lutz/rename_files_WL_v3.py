@@ -1,23 +1,55 @@
 import os
 import os.path
 import shutil
+import re
 import tkinter as tk
 from tkinter.filedialog import askdirectory
 from pylinac import WinstonLutz
 
 
-def rename_files(event):
+def open_files_path(event):
+
+    # necessary to use this variable in other functions
+    global main_path
 
     # user select the directory of the images
     main_path = askdirectory(title='Select folder')
     if not main_path:
         print("Nenhuma pasta selecionada!")
         return
+    else:
+        print(main_path)
+
+        # show message concluded
+        lbl_concluded = tk.Label(master=frm_select_folder,
+                                 text="Caminho selecionado:\n" + main_path)
+        lbl_concluded.grid()
+
+        # return main_path
+
+
+def format_images(event):
 
     # positions of gantry, col and couch
     gantry = [0, 90, 180, 270, 0, 0, 0, 0]
     colimator = [0, 0, 0, 0, 90, 270, 0, 0]
     couch = [0, 0, 0, 0, 0, 0, 90, 270]
+
+    # count the n of files inside directory and check with the expected n
+    num_files = 0
+    for folderName, subfolders, filenames in os.walk(main_path):
+        for filename in filenames:
+            if re.search("^gantry", filename):
+                print("Imagens já formatadas!")
+                return
+            if re.search("^[0-9]+", filename):
+                #print('FILE INSIDE ' + folderName + ': ' + filename)
+                num_files = num_files + 1
+    print(num_files)
+
+    if num_files != len(gantry):
+        print("Número de imagens incorreto!")
+        return
 
     # move the files to the main path
     n = 0
@@ -43,7 +75,8 @@ def rename_files(event):
     # delete empty folders
     folders = list(os.walk(main_path, topdown=False))
     for folder in folders:
-        if not folder[2]:
+        if not (folder[1] and folder[2]):
+            print("Pasta removida: " + folder[0])
             os.rmdir(folder[0])
 
     # show message concluded
@@ -67,14 +100,14 @@ frm_select_folder = tk.LabelFrame(
     master=window, text="Select folder", font="VERDANA")
 frm_select_folder.grid(row=0, column=0)
 
-lbl_select_folder = tk.Label(
-    master=frm_select_folder,
-    text="Clique no botão para selecionar a pasta", font="VERDANA")
-lbl_select_folder.grid(row=0, column=0)
-
 button = tk.Button(master=frm_select_folder,
                    text="Selecionar pasta", font="VERDANA")
-button.bind("<Button-1>", rename_files)
+button.bind("<Button-1>", open_files_path)
+button.grid(row=0, column=0)
+
+button = tk.Button(master=frm_select_folder,
+                   text="Formatar imagens", font="VERDANA")
+button.bind("<Button-1>", format_images)
 button.grid(row=1, column=0)
 
 # Frame to choose from which LINAC the WL was run
