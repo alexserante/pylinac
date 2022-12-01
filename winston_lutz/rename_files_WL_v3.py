@@ -7,7 +7,7 @@ from tkinter.filedialog import askdirectory
 from pylinac import WinstonLutz
 
 
-def open_files_path(event):
+def open_files_path():
 
     # necessary to use this variable in other functions
     global main_path
@@ -28,7 +28,7 @@ def open_files_path(event):
         # return main_path
 
 
-def format_images(event):
+def format_images():
 
     # positions of gantry, col and couch
     gantry = [0, 90, 180, 270, 0, 0, 0, 0]
@@ -85,6 +85,22 @@ def format_images(event):
     lbl_concluded.grid()
 
 
+def analyze_wl():
+    global wl
+
+    wl = WinstonLutz(main_path, use_filenames=True)
+    wl.analyze(bb_size_mm=8)
+    print(wl.results())
+
+
+def show_images():
+    wl.plot_images()
+
+
+def save_pdf():
+    pass
+
+
 # ########################################################## #
 #                                                            #
 #                         MAIN PROGRAM                       #
@@ -101,13 +117,13 @@ frm_select_folder = tk.LabelFrame(
 frm_select_folder.grid(row=0, column=0)
 
 button = tk.Button(master=frm_select_folder,
-                   text="Selecionar pasta", font="VERDANA")
-button.bind("<Button-1>", open_files_path)
+                   text="Selecionar pasta", font="VERDANA",
+                   command=open_files_path)
 button.grid(row=0, column=0)
 
 button = tk.Button(master=frm_select_folder,
-                   text="Formatar imagens", font="VERDANA")
-button.bind("<Button-1>", format_images)
+                   text="Formatar imagens", font="VERDANA",
+                   command=format_images)
 button.grid(row=1, column=0)
 
 # Frame to choose from which LINAC the WL was run
@@ -130,7 +146,13 @@ frm_perform_analysis = tk.LabelFrame(
 frm_perform_analysis.grid(row=0, column=2)
 
 btn_perform_analysis = tk.Button(
-    master=frm_perform_analysis, text="Fazer análise WL", font="VERDANA")
+    master=frm_perform_analysis, text="Fazer análise WL", font="VERDANA",
+    command=analyze_wl)
 btn_perform_analysis.grid(row=0, column=0)
+
+btn_show_images = tk.Button(
+    master=frm_perform_analysis, text="Mostrar imagens", font="VERDANA",
+    command=show_images)
+btn_show_images.grid(row=1, column=0)
 
 window.mainloop()
