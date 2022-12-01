@@ -19,10 +19,14 @@ def rename_files(event):
     colimator = [0, 0, 0, 0, 90, 270, 0, 0]
     couch = [0, 0, 0, 0, 0, 0, 90, 270]
 
+    # move the files to the main path
     n = 0
     for folderName, subfolders, filenames in os.walk(main_path):
         for filename in filenames:
             print('FILE INSIDE ' + folderName + ': ' + filename)
+
+            if filename == "DICOMDIR":
+                os.remove(main_path + "/" + filename)
 
             if filename != "DICOMDIR":
                 file_path = folderName + '/' + filename
@@ -31,25 +35,16 @@ def rename_files(event):
                       str(gantry[n]) + "coll" + str(colimator[n]) +
                       "couch" + str(couch[n]) + ".dcm" + "\n")
 
-                # move the file to the main path
                 shutil.move(file_path, main_path + "/" + "gantry" +
                             str(gantry[n]) + "coll" + str(colimator[n]) +
                             "couch" + str(couch[n]) + ".dcm")
                 n = n + 1
 
-    for folderName, subfolders, filenames in os.walk(main_path, topdown=False):
-        for subfolder in subfolders:
-            print('FILE INSIDE ' + folderName + ': ' + filename)
-            os.rmdir(os.path.join(main_path, subfolder))
-            for filename in filenames:
-                print('FILE INSIDE ' + folderName + ': ' + filename)
-                if filename == "DICOMDIR":
-                    os.remove(os.path.join(subfolder, filename))
-
-    '''# print files in main_path
-        onlyfiles = [f for f in os.listdir(
-        main_path) if os.path.isfile(os.path.join(main_path, f))]
-    print(onlyfiles)'''
+    # delete empty folders
+    folders = list(os.walk(main_path, topdown=False))
+    for folder in folders:
+        if not folder[2]:
+            os.rmdir(folder[0])
 
     # show message concluded
     lbl_concluded = tk.Label(master=frm_select_folder,
@@ -73,7 +68,8 @@ frm_select_folder = tk.LabelFrame(
 frm_select_folder.grid(row=0, column=0)
 
 lbl_select_folder = tk.Label(
-    master=frm_select_folder, text="Clique no botão para selecionar a pasta", font="VERDANA")
+    master=frm_select_folder,
+    text="Clique no botão para selecionar a pasta", font="VERDANA")
 lbl_select_folder.grid(row=0, column=0)
 
 button = tk.Button(master=frm_select_folder,
