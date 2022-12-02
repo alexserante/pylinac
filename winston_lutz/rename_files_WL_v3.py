@@ -20,10 +20,8 @@ def open_files_path():
     else:
         print(main_path)
 
-        # show message concluded
-        lbl_concluded = tk.Label(master=frm_select_folder,
-                                 text="Caminho selecionado:\n" + main_path)
-        lbl_concluded.grid()
+        # show message with the selected path
+        lbl_path.config(text="Caminho selecionado:\n" + main_path)
 
         # return main_path
 
@@ -91,7 +89,8 @@ def analyze_wl():
     wl = WinstonLutz(main_path, use_filenames=True)
     wl.analyze(bb_size_mm=8)
     print(wl.results())
-    wl.plot_summary()
+    # show message with the selected path
+    lbl_results.config(text=wl.results())
 
 
 def show_images():
@@ -131,6 +130,12 @@ button = tk.Button(master=frm_select_folder,
                    command=format_images)
 button.grid(row=1, column=0)
 
+
+frm_path = tk.Frame(master=window)
+frm_path.grid(row=1, column=0)
+lbl_path = tk.Label(master=frm_path)
+lbl_path.grid()
+
 # Frame to choose from which LINAC the WL was run
 '''frm_select_linac = tk.Frame(master=window, borderwidth=1, relief="raised")
 frm_select_linac.grid(row=0, column=1)
@@ -164,5 +169,13 @@ btn_plot_summary = tk.Button(
     master=frm_perform_analysis, text="Plotar gráficos", font="VERDANA",
     command=show_plots)
 btn_plot_summary.grid(row=2, column=0)
+
+frm_results = tk.LabelFrame(
+    master=window, width=425, height=250, text="Resultados", font="VERDANA")
+frm_results.grid(row=0, column=3)
+frm_results.grid_propagate(0)
+
+lbl_results = tk.Label(master=frm_results)
+lbl_results.grid(row=0, column=0)
 
 window.mainloop()
