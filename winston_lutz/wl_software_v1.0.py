@@ -131,13 +131,11 @@ frm_select_folder.grid(row=0, column=0)
 
 button = tk.Button(master=frm_select_folder,
                    text="Selecionar pasta", font="VERDANA",
-                   command=open_files_path)
-button.grid(row=0, column=0)
+                   command=open_files_path).grid(row=0, column=0)
 
 button = tk.Button(master=frm_select_folder,
                    text="Formatar imagens", font="VERDANA",
-                   command=format_images)
-button.grid(row=1, column=0, padx=10, pady=20)
+                   command=format_images).grid(row=1, column=0, padx=10, pady=20)
 
 
 # Frame to choose from which LINAC the WL was run
@@ -161,18 +159,15 @@ frm_perform_analysis.grid(row=0, column=2)
 
 btn_perform_analysis = tk.Button(
     master=frm_perform_analysis, text="Fazer análise WL", font="VERDANA",
-    command=analyze_wl)
-btn_perform_analysis.grid(row=0, column=0)
+    command=analyze_wl).grid(row=0, column=0)
 
 btn_show_images = tk.Button(
     master=frm_perform_analysis, text="Mostrar imagens", font="VERDANA",
-    command=show_images)
-btn_show_images.grid(row=1, column=0, padx=10, pady=20)
+    command=show_images).grid(row=1, column=0, padx=10, pady=20)
 
 btn_plot_summary = tk.Button(
     master=frm_perform_analysis, text="Plotar gráficos", font="VERDANA",
-    command=show_plots)
-btn_plot_summary.grid(row=2, column=0)
+    command=show_plots).grid(row=2, column=0)
 
 frm_results = tk.LabelFrame(
     master=window, width=435, height=250, text="Resultados", font="VERDANA")
