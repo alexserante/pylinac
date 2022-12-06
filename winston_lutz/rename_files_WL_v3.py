@@ -7,6 +7,13 @@ from tkinter.filedialog import askdirectory
 from pylinac import WinstonLutz
 
 
+# Function to show messages in the console as labels in the Console Label Frame
+def message_console(text_console):
+    lbl_console = tk.Label(
+        master=frm_console, text=text_console).grid(sticky="w")
+    return
+
+
 def open_files_path():
 
     # necessary to use this variable in other functions
@@ -15,15 +22,13 @@ def open_files_path():
     # user select the directory of the images
     main_path = askdirectory(title='Select folder')
     if not main_path:
-        print("Nenhuma pasta selecionada!")
+        #print("Nenhuma pasta selecionada!")
+        text_console = "Nenhuma pasta selecionada!"
+        message_console(text_console)
         return
     else:
-        print(main_path)
-
-        # show message with the selected path
-        lbl_path.config(text="Caminho selecionado:\n" + main_path)
-
-        # return main_path
+        text_console = "Caminho selecionado: " + main_path
+        message_console(text_console)
 
 
 def format_images():
@@ -92,6 +97,9 @@ def analyze_wl():
     # show message with the selected path
     lbl_results.config(text=wl.results())
 
+    text_console = "Análise concluída!"
+    message_console(text_console)
+
 
 def show_images():
     wl.plot_images()
@@ -128,13 +136,8 @@ button.grid(row=0, column=0)
 button = tk.Button(master=frm_select_folder,
                    text="Formatar imagens", font="VERDANA",
                    command=format_images)
-button.grid(row=1, column=0)
+button.grid(row=1, column=0, padx=10, pady=20)
 
-
-frm_path = tk.Frame(master=window)
-frm_path.grid(row=1, column=0)
-lbl_path = tk.Label(master=frm_path)
-lbl_path.grid()
 
 # Frame to choose from which LINAC the WL was run
 '''frm_select_linac = tk.Frame(master=window, borderwidth=1, relief="raised")
@@ -163,7 +166,7 @@ btn_perform_analysis.grid(row=0, column=0)
 btn_show_images = tk.Button(
     master=frm_perform_analysis, text="Mostrar imagens", font="VERDANA",
     command=show_images)
-btn_show_images.grid(row=1, column=0)
+btn_show_images.grid(row=1, column=0, padx=10, pady=20)
 
 btn_plot_summary = tk.Button(
     master=frm_perform_analysis, text="Plotar gráficos", font="VERDANA",
@@ -171,11 +174,18 @@ btn_plot_summary = tk.Button(
 btn_plot_summary.grid(row=2, column=0)
 
 frm_results = tk.LabelFrame(
-    master=window, width=425, height=250, text="Resultados", font="VERDANA")
+    master=window, width=435, height=250, text="Resultados", font="VERDANA")
 frm_results.grid(row=0, column=3)
 frm_results.grid_propagate(0)
 
 lbl_results = tk.Label(master=frm_results)
 lbl_results.grid(row=0, column=0)
+
+
+# Console frame
+frm_console = tk.LabelFrame(
+    master=window, width=800, height=50, text="Console")
+frm_console.grid(row=1, column=0, columnspan=4, sticky="nw")
+
 
 window.mainloop()
