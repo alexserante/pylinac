@@ -83,9 +83,8 @@ def format_images():
             os.rmdir(folder[0])
 
     # show message concluded
-    lbl_concluded = tk.Label(master=frm_select_folder,
-                             text="Formatação das imagens concluída")
-    lbl_concluded.grid()
+    text_console = "Formatação das imagens concluída"
+    message_console(text_console)
 
 
 def analyze_wl():
@@ -98,6 +97,7 @@ def analyze_wl():
     # show message with the selected path
     lbl_results.config(text=wl.results())
 
+    # show message in console
     text_console = "Análise concluída!"
     message_console(text_console)
 
