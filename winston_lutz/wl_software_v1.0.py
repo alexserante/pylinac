@@ -91,6 +91,7 @@ def format_images():
 def analyze_wl():
     global wl
 
+    # use_filenames=True necessary to get angles from the name of the files
     wl = WinstonLutz(main_path, use_filenames=True)
     wl.analyze(bb_size_mm=8)
     print(wl.results())
