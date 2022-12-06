@@ -9,8 +9,7 @@ from pylinac import WinstonLutz
 
 # Function to show messages in the console as labels in the Console Label Frame
 def message_console(text_console):
-    lbl_console = tk.Label(
-        master=frm_console, text=text_console).grid(sticky="w")
+    tk.Label(master=frm_console, text=text_console).grid(sticky="w")
     return
 
 
@@ -22,11 +21,12 @@ def open_files_path():
     # user select the directory of the images
     main_path = askdirectory(title='Select folder')
     if not main_path:
-        #print("Nenhuma pasta selecionada!")
+        # print("Nenhuma pasta selecionada!")
         text_console = "Nenhuma pasta selecionada!"
         message_console(text_console)
         return
     else:
+        # print("Caminho selecionado: " + main_path)
         text_console = "Caminho selecionado: " + main_path
         message_console(text_console)
 
@@ -43,15 +43,19 @@ def format_images():
     for folderName, subfolders, filenames in os.walk(main_path):
         for filename in filenames:
             if re.search("^gantry", filename):
-                print("Imagens já formatadas!")
+                # print("Imagens já formatadas!")
+                text_console = "Imagens já formatadas!"
+                message_console(text_console)
                 return
             if re.search("^[0-9]+", filename):
-                #print('FILE INSIDE ' + folderName + ': ' + filename)
+                # print('FILE INSIDE ' + folderName + ': ' + filename)
                 num_files = num_files + 1
     print(num_files)
 
     if num_files != len(gantry):
-        print("Número de imagens incorreto!")
+        text_console = "Número de imagens incorreto!"
+        message_console(text_console)
+        # print("Número de imagens incorreto!")
         return
 
     # move the files to the main path
