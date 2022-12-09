@@ -92,6 +92,7 @@ def format_images():
 
 
 def analyze_wl():
+
     global wl
 
     # use_filenames=True necessary to get angles from the name of the files
@@ -107,8 +108,8 @@ def analyze_wl():
     message_console(text_console)
 
 
-def show_images():
-    wl.plot_images(axis = "Couch")
+def show_images(axis):
+    wl.plot_images(axis=axis)
 
 
 def show_plots():
@@ -161,9 +162,16 @@ btn_plot_summary = tk.Button(
 frm_images = tk.LabelFrame(master=frm_left, text="Imagens", font="VERDANA")
 frm_images.grid(row=1, column=0, columnspan=2)
 
-btn_show_images = tk.Button(
-    master=frm_images, text="Mostrar imagens", font="VERDANA",
-    command=show_images).grid(row=0, column=0)
+
+btn_gantry_images = tk.Button(
+    master=frm_images, text="Gantry", font="VERDANA",
+    command=show_images("Gantry")).grid(row=0, column=0)
+btn_collimator_images = tk.Button(
+    master=frm_images, text="Colimador", font="VERDANA",
+    command=show_images("Collimator")).grid(row=0, column=1)
+btn_couch_images = tk.Button(
+    master=frm_images, text="Mesa", font="VERDANA",
+    command=show_images("Couch")).grid(row=0, column=2)
 
 
 frm_results = tk.LabelFrame(
