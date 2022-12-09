@@ -4,7 +4,7 @@ import shutil
 import re
 import tkinter as tk
 from tkinter.filedialog import askdirectory
-from pylinac import WinstonLutz
+from pylinac import WinstonLutz #pylinac==3.5.0
 
 
 # Function to show messages in the console as labels in the Console Label Frame
@@ -107,7 +107,7 @@ def analyze_wl():
 
 
 def show_images():
-    wl.plot_images()
+    wl.plot_images(axis = "Couch")
 
 
 def show_plots():
@@ -165,13 +165,18 @@ btn_perform_analysis = tk.Button(
     master=frm_perform_analysis, text="Fazer análise WL", font="VERDANA",
     command=analyze_wl).grid(row=0, column=0)
 
-btn_show_images = tk.Button(
-    master=frm_perform_analysis, text="Mostrar imagens", font="VERDANA",
-    command=show_images).grid(row=1, column=0, padx=10, pady=20)
-
 btn_plot_summary = tk.Button(
     master=frm_perform_analysis, text="Plotar gráficos", font="VERDANA",
     command=show_plots).grid(row=2, column=0)
+
+
+frm_images = tk.LabelFrame(master=window, text="Imagens", font="VERDANA")
+frm_images.grid(row=1, column=0, columnspan=2)
+
+btn_show_images = tk.Button(
+    master=frm_images, text="Mostrar imagens", font="VERDANA",
+    command=show_images).grid(row=0, column=0)
+
 
 frm_results = tk.LabelFrame(
     master=window, width=435, height=250, text="Resultados", font="VERDANA")
