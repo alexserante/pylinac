@@ -100,6 +100,7 @@ def analyze_wl():
     print(wl.results())
     # show message with the selected path
     lbl_results.config(text=wl.results())
+    lbl_shift_bb.config(text="Mover: " + wl.bb_shift_instructions())
 
     # show message in console
     text_console = "Análise concluída!"
@@ -127,10 +128,12 @@ def save_pdf():
 
 window = tk.Tk()
 
+frm_left = tk.Frame(master=window)
+frm_left.grid(row=0, column=0)
 
 # Frame to select folder where the dcm images are
 frm_select_folder = tk.LabelFrame(
-    master=window, text="Select folder", font="VERDANA")
+    master=frm_left, text="Select folder", font="VERDANA")
 frm_select_folder.grid(row=0, column=0)
 
 button = tk.Button(master=frm_select_folder,
@@ -140,6 +143,50 @@ button = tk.Button(master=frm_select_folder,
 button = tk.Button(master=frm_select_folder,
                    text="Formatar imagens", font="VERDANA",
                    command=format_images).grid(row=1, column=0, padx=10, pady=20)
+
+
+frm_perform_analysis = tk.LabelFrame(
+    master=frm_left, text="WL analysis", font="VERDANA")
+frm_perform_analysis.grid(row=0, column=2)
+
+btn_perform_analysis = tk.Button(
+    master=frm_perform_analysis, text="Fazer análise WL", font="VERDANA",
+    command=analyze_wl).grid(row=0, column=0)
+
+btn_plot_summary = tk.Button(
+    master=frm_perform_analysis, text="Plotar gráficos", font="VERDANA",
+    command=show_plots).grid(row=2, column=0)
+
+
+frm_images = tk.LabelFrame(master=frm_left, text="Imagens", font="VERDANA")
+frm_images.grid(row=1, column=0, columnspan=2)
+
+btn_show_images = tk.Button(
+    master=frm_images, text="Mostrar imagens", font="VERDANA",
+    command=show_images).grid(row=0, column=0)
+
+
+frm_results = tk.LabelFrame(
+    master=window, width=435, height=250, text="Resultados", font="VERDANA")
+frm_results.grid(row=0, column=3)
+frm_results.grid_propagate(0)
+
+lbl_results = tk.Label(master=frm_results)
+lbl_results.grid(row=0, column=0)
+
+frm_shift_bb = tk.LabelFrame(
+    master=window, width=435, height=50, text="Shift", font="VERDANA")
+frm_shift_bb.grid(row=1, column=3)
+frm_shift_bb.grid_propagate(0)
+
+lbl_shift_bb = tk.Label(master=frm_shift_bb, text="", fg="Red", font="VERDANA")
+lbl_shift_bb.grid(row=0, column=0)
+
+
+# Console frame
+frm_console = tk.LabelFrame(
+    master=window, width=800, height=50, text="Console")
+frm_console.grid(row=2, column=0, columnspan=4, sticky="nw")
 
 
 # Frame to choose from which LINAC the WL was run
@@ -156,41 +203,5 @@ rbtn_linac_6 = tk.Radiobutton(
 rbtn_linac_4.grid(row=0, column=0)
 rbtn_linac_5.grid(row=1, column=0)s
 rbtn_linac_6.grid(row=2, column=0)'''
-
-frm_perform_analysis = tk.LabelFrame(
-    master=window, text="WL analysis", font="VERDANA")
-frm_perform_analysis.grid(row=0, column=2)
-
-btn_perform_analysis = tk.Button(
-    master=frm_perform_analysis, text="Fazer análise WL", font="VERDANA",
-    command=analyze_wl).grid(row=0, column=0)
-
-btn_plot_summary = tk.Button(
-    master=frm_perform_analysis, text="Plotar gráficos", font="VERDANA",
-    command=show_plots).grid(row=2, column=0)
-
-
-frm_images = tk.LabelFrame(master=window, text="Imagens", font="VERDANA")
-frm_images.grid(row=1, column=0, columnspan=2)
-
-btn_show_images = tk.Button(
-    master=frm_images, text="Mostrar imagens", font="VERDANA",
-    command=show_images).grid(row=0, column=0)
-
-
-frm_results = tk.LabelFrame(
-    master=window, width=435, height=250, text="Resultados", font="VERDANA")
-frm_results.grid(row=0, column=3)
-frm_results.grid_propagate(0)
-
-lbl_results = tk.Label(master=frm_results)
-lbl_results.grid(row=0, column=0)
-
-
-# Console frame
-frm_console = tk.LabelFrame(
-    master=window, width=800, height=50, text="Console")
-frm_console.grid(row=1, column=0, columnspan=4, sticky="nw")
-
 
 window.mainloop()
