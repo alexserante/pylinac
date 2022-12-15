@@ -4,7 +4,7 @@ import shutil
 import re
 import tkinter as tk
 from tkinter.filedialog import askdirectory
-from pylinac import WinstonLutz #pylinac==3.5.0
+from pylinac import WinstonLutz  # pylinac==3.5.0
 
 
 # Function to show messages in the console as labels in the Console Label Frame
@@ -111,8 +111,10 @@ def analyze_wl():
 def show_images_gantry():
     wl.plot_images(axis="Gantry")
 
+
 def show_images_col():
     wl.plot_images(axis="Collimator")
+
 
 def show_images_couch():
     wl.plot_images(axis="Couch")
@@ -123,7 +125,7 @@ def show_plots():
 
 
 def save_pdf():
-    pass
+    wl.publish_pdf(main_path + "teste.pdf")
 
 
 # ########################################################################### #
@@ -144,12 +146,12 @@ frm_select_folder = tk.LabelFrame(
 frm_select_folder.grid(row=0, column=0, padx=10, pady=5)
 
 btn_select_folder = tk.Button(master=frm_select_folder,
-                   text="Selecionar pasta", font="VERDANA",
-                   command=open_files_path).grid(row=0, column=0, padx=10, pady=5)
+                              text="Selecionar pasta", font="VERDANA",
+                              command=open_files_path).grid(row=0, column=0, padx=10, pady=5)
 
 btn_format_images = tk.Button(master=frm_select_folder,
-                   text="Formatar imagens", font="VERDANA",
-                   command=format_images).grid(row=1, column=0, padx=10, pady=5)
+                              text="Formatar imagens", font="VERDANA",
+                              command=format_images).grid(row=1, column=0, padx=10, pady=5)
 
 
 frm_perform_analysis = tk.LabelFrame(
@@ -179,11 +181,12 @@ btn_couch_images = tk.Button(
     master=frm_images, text="Mesa", font="VERDANA",
     command=show_images_couch).grid(row=0, column=2, padx=10, pady=5)
 
-frm_save_pdf = tk.LabelFrame(master=frm_left, text="Salvar resultados", font="VERDANA")
+frm_save_pdf = tk.LabelFrame(
+    master=frm_left, text="Salvar resultados", font="VERDANA")
 frm_save_pdf.grid(row=2, column=0, columnspan=2, padx=20, pady=5, sticky="w")
 
 # Frame to choose from which LINAC the WL was run
-frm_select_linac = tk.Frame(master=frm_save_pdf, borderwidth=1, relief="raised")
+'''frm_select_linac = tk.Frame(master=frm_save_pdf, borderwidth=1, relief="raised")
 frm_select_linac.grid(row=0, column=0)
 
 var_linac = ""
@@ -204,7 +207,7 @@ rbtn_linac_2.grid(row=1, column=0)
 rbtn_linac_3.grid(row=2, column=0)
 rbtn_linac_4.grid(row=0, column=1)
 rbtn_linac_5.grid(row=1, column=1)
-rbtn_linac_6.grid(row=2, column=1)
+rbtn_linac_6.grid(row=2, column=1)'''
 
 btn_save_pdf = tk.Button(
     master=frm_save_pdf, text="Salvar PDF", font="VERDANA",
