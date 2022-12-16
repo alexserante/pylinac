@@ -186,7 +186,7 @@ frm_save_pdf = tk.LabelFrame(
 frm_save_pdf.grid(row=2, column=0, columnspan=2, padx=20, pady=5, sticky="w")
 
 # Frame to choose from which LINAC the WL was run
-'''frm_select_linac = tk.Frame(master=frm_save_pdf, borderwidth=1, relief="raised")
+frm_select_linac = tk.Frame(master=frm_save_pdf, borderwidth=1, relief="raised")
 frm_select_linac.grid(row=0, column=0)
 
 var_linac = ""
@@ -207,7 +207,7 @@ rbtn_linac_2.grid(row=1, column=0)
 rbtn_linac_3.grid(row=2, column=0)
 rbtn_linac_4.grid(row=0, column=1)
 rbtn_linac_5.grid(row=1, column=1)
-rbtn_linac_6.grid(row=2, column=1)'''
+rbtn_linac_6.grid(row=2, column=1)
 
 btn_save_pdf = tk.Button(
     master=frm_save_pdf, text="Salvar PDF", font="VERDANA",
