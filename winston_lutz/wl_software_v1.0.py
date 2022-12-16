@@ -126,7 +126,10 @@ def show_plots():
 
 
 def save_pdf():
-    wl.publish_pdf(main_path + "teste.pdf")
+    wl.publish_pdf(main_path + "/" + "teste.pdf")
+    # show message in console
+    text_console = "PDF salvo em: " + main_path + "/" + "teste.pdf"
+    message_console(text_console)
 
 
 # ########################################################################### #
