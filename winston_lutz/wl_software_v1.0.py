@@ -186,22 +186,23 @@ frm_save_pdf = tk.LabelFrame(
 frm_save_pdf.grid(row=2, column=0, columnspan=2, padx=20, pady=5, sticky="w")
 
 # Frame to choose from which LINAC the WL was run
-frm_select_linac = tk.Frame(master=frm_save_pdf, borderwidth=1, relief="raised")
+frm_select_linac = tk.Frame(
+    master=frm_save_pdf, borderwidth=1, relief="raised")
 frm_select_linac.grid(row=0, column=0)
 
-var_linac = ""
+var_linac = IntVar()
 rbtn_linac_1 = tk.Radiobutton(
-    master=frm_select_linac, text="AL1", variable=var_linac, value="AL1")
+    master=frm_select_linac, text="AL1", variable=var_linac, value="AL1", command=sel)
 rbtn_linac_2 = tk.Radiobutton(
-    master=frm_select_linac, text="AL2", variable=var_linac, value="AL2")
+    master=frm_select_linac, text="AL2", variable=var_linac, value="AL2", command=sel)
 rbtn_linac_3 = tk.Radiobutton(
-    master=frm_select_linac, text="AL3", variable=var_linac, value="AL3")
+    master=frm_select_linac, text="AL3", variable=var_linac, value="AL3", command=sel)
 rbtn_linac_4 = tk.Radiobutton(
-    master=frm_select_linac, text="AL4", variable=var_linac, value="AL4")
+    master=frm_select_linac, text="AL4", variable=var_linac, value="AL4", command=sel)
 rbtn_linac_5 = tk.Radiobutton(
-    master=frm_select_linac, text="AL5", variable=var_linac, value="AL5")
+    master=frm_select_linac, text="AL5", variable=var_linac, value="AL5", command=sel)
 rbtn_linac_6 = tk.Radiobutton(
-    master=frm_select_linac, text="AL6", variable=var_linac, value="AL6")
+    master=frm_select_linac, text="AL6", variable=var_linac, value="AL6", command=sel)
 rbtn_linac_1.grid(row=0, column=0)
 rbtn_linac_2.grid(row=1, column=0)
 rbtn_linac_3.grid(row=2, column=0)
