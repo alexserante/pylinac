@@ -6,6 +6,7 @@ import tkinter as tk
 from tkinter import *
 from tkinter.filedialog import askdirectory
 from pylinac import WinstonLutz  # pylinac==3.5.0
+from datetime import datetime
 
 
 # Function to show messages in the console as labels in the Console Label Frame
@@ -126,9 +127,11 @@ def show_plots():
 
 
 def save_pdf():
-    wl.publish_pdf(main_path + "/" + "teste.pdf")
+    date = datetime.today().strftime("%Y%m%d")
+    path = main_path + "/WL-" + date + ".pdf"
+    wl.publish_pdf(path)
     # show message in console
-    text_console = "PDF salvo em: " + main_path + "/" + "teste.pdf"
+    text_console = "PDF salvo em: " + path
     message_console(text_console)
 
 
