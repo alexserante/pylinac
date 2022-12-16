@@ -1,29 +1,25 @@
-import tkinter as tk
+from tkinter import *
 
 
-def increase():
-    value = int(lbl_value["text"])
-    lbl_value["text"] = f"{value + 1}"
+def sel():
+    selection = "You selected the option " + str(var.get())
+    label.config(text=selection)
 
 
-def decrease():
-    value = int(lbl_value["text"])
-    lbl_value["text"] = f"{value - 1}"
+root = Tk()
+var = IntVar()
+R1 = Radiobutton(root, text="Option 1", variable=var, value=1,
+                 command=sel)
+R1.pack(anchor=W)
 
+R2 = Radiobutton(root, text="Option 2", variable=var, value=2,
+                 command=sel)
+R2.pack(anchor=W)
 
-window = tk.Tk()
+R3 = Radiobutton(root, text="Option 3", variable=var, value=3,
+                 command=sel)
+R3.pack(anchor=W)
 
-window.rowconfigure(0, minsize=50, weight=1)
-window.columnconfigure([0, 1, 2], minsize=50, weight=1)
-
-
-lbl_value = tk.Label(master=window, text="0")
-lbl_value.grid(row=0, column=1)
-
-btn_decrease = tk.Button(master=window, text="-", command=decrease)
-btn_decrease.grid(row=0, column=0, sticky="nsew")
-
-btn_increase = tk.Button(master=window, text="+", command=increase)
-btn_increase.grid(row=0, column=2, sticky="nsew")
-
-window.mainloop()
+label = Label(root)
+label.pack()
+root.mainloop()
