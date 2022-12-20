@@ -105,8 +105,6 @@ def analyze_wl():
     lbl_results.config(text=wl.results())
     lbl_shift_bb.config(text="Mover: " + wl.bb_shift_instructions())
 
-    print(wl.bb_shift_vector().get())
-
     # show message in console
     text_console = "Análise concluída!"
     message_console(text_console)
@@ -131,6 +129,11 @@ def show_plots():
 def save_pdf():
     date = datetime.today().strftime("%Y%m%d")
     path = main_path + "/WL-" + date + ".pdf"
+
+    '''shift_vector = [round(wl.bb_shift_vector.x, 3), round(wl.bb_shift_vector.y, 3), round(wl.bb_shift_vector.z, 3)]
+    with open("L:/Radioterapia/Fisicos/Controle_Qualidade/WL/AL06_WL.txt", "w") as f:
+        for a in shift_vector:
+            f.write(str(a))'''
 
     dem_dict = {'Autor': '', 'Acelerador': ''}
     dem_dict['Autor'] = name_var.get()
