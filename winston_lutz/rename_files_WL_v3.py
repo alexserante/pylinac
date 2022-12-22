@@ -38,6 +38,10 @@ def format_images():
     colimator = [0, 0, 0, 0, 90, 270, 0, 0]
     couch = [0, 0, 0, 0, 0, 0, 90, 270]
 
+    '''gantry = [0, 30, 45, 90, 150, 180, 320, 270, 220, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    colimator = [0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 45, 90, 150, 180, 320, 270, 220, 0, 0, 0, 0, 0, 0]
+    couch = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 45, 90, 330, 315, 270]'''
+
     # count the n of files inside directory and check with the expected n
     num_files = 0
     for folderName, subfolders, filenames in os.walk(main_path):
