@@ -36,13 +36,13 @@ def open_files_path():
 def format_images():
 
     # positions of gantry, col and couch
-    gantry = [0, 90, 180, 270, 0, 0, 0, 0]
+    '''gantry = [0, 90, 180, 270, 0, 0, 0, 0]
     colimator = [0, 0, 0, 0, 90, 270, 0, 0]
-    couch = [0, 0, 0, 0, 0, 0, 90, 270]
+    couch = [0, 0, 0, 0, 0, 0, 90, 270]'''
 
-    '''gantry = [0, 30, 45, 90, 150, 180, 320, 270, 220, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    gantry = [0, 30, 45, 90, 150, 180, 320, 270, 220, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     colimator = [0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 45, 90, 150, 180, 320, 270, 220, 0, 0, 0, 0, 0, 0]
-    couch = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 45, 90, 330, 315, 270]'''
+    couch = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 45, 90, 330, 315, 270]
 
     # count the n of files inside directory and check with the expected n
     num_files = 0
@@ -246,13 +246,17 @@ lbl_name = tk.Label(master=frm_save_pdf, text="Autor: ").grid(row=0, column=0)
 entry_name = tk.Entry(master=frm_save_pdf,
                       textvariable=name_var).grid(row=0, column=1)
 lbl_acelerador = tk.Label(
-    master=frm_save_pdf, text="Acelerador: ").grid(row=1, column=0)
+    master=frm_save_pdf, text="Acelerador: ").grid(row=1, column=0, rowspan=2, sticky="nw")
 entry_acelerator = tk.Entry(
-    master=frm_save_pdf, textvariable=acelerator_var, width=3).grid(row=1, column=1, sticky="w")
+    master=frm_save_pdf, textvariable=acelerator_var, width=3).grid(row=1, column=1, rowspan=2, sticky="nw")
 
 btn_save_pdf = tk.Button(
     master=frm_save_pdf, text="Salvar PDF", font="VERDANA",
-    command=save_pdf).grid(row=0, column=2, rowspan=2, padx=10, pady=10)
+    command=save_pdf).grid(row=0, column=2, padx=10, pady=2)
+
+btn_save_results = tk.Button(
+    master=frm_save_pdf, text="Registrar resultado", font="VERDANA",
+    command=save_pdf).grid(row=1, column=2, padx=10, pady=5)
 
 
 # Console frame
