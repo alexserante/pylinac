@@ -134,11 +134,6 @@ def save_pdf():
     date = datetime.today().strftime("%Y%m%d")
     path = main_path + "/WL-" + date + ".pdf"
 
-    '''shift_vector = [round(wl.bb_shift_vector.x, 3), round(wl.bb_shift_vector.y, 3), round(wl.bb_shift_vector.z, 3)]
-    with open("L:/Radioterapia/Fisicos/Controle_Qualidade/WL/AL06_WL.txt", "w") as f:
-        for a in shift_vector:
-            f.write(str(a))'''
-
     dem_dict = {'Autor': '', 'Acelerador': ''}
     dem_dict['Autor'] = name_var.get()
     dem_dict['Acelerador'] = acelerator_var.get()
@@ -147,6 +142,14 @@ def save_pdf():
     # show message in console
     text_console = "PDF salvo em: " + path
     message_console(text_console)
+
+
+def save_results():
+    '''shift_vector = [round(wl.bb_shift_vector.x, 3), round(wl.bb_shift_vector.y, 3), round(wl.bb_shift_vector.z, 3)]
+    with open("L:/Radioterapia/Fisicos/Controle_Qualidade/WL/AL06_WL.txt", "w") as f:
+        for a in shift_vector:
+            f.write(str(a))'''
+    pass
 
 
 # ########################################################################### #
@@ -256,7 +259,7 @@ btn_save_pdf = tk.Button(
 
 btn_save_results = tk.Button(
     master=frm_save_pdf, text="Registrar resultado", font="VERDANA",
-    command=save_pdf).grid(row=1, column=2, padx=10, pady=5)
+    command=save_results).grid(row=1, column=2, padx=10, pady=5)
 
 
 # Console frame
