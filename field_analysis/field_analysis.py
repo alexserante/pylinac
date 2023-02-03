@@ -1,7 +1,9 @@
 from pylinac import FieldAnalysis, Protocol, Centering, Edge, Normalization, Interpolation
 
 my_file = r"C:\Users\alexandre.serante\Desktop\github\EPID_images\flood_field\AL5_6MV_20x20_10MU.dcm"
-my_img = FieldAnalysis(path=my_file)
+
+my_img = FieldAnalysis(path=my_file) # no filter apllied to the image
+#my_img = FieldAnalysis(path=my_file, filter=10) # filter applied
 
 
 my_img.analyze(protocol=Protocol.VARIAN, interpolation=Interpolation.LINEAR, normalization_method=Normalization.MAX,
