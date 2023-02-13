@@ -8,9 +8,8 @@ my_img = FieldAnalysis(path=my_file, filter=10,)
 
 my_img.analyze(protocol=Protocol.VARIAN, in_field_ratio=0.8, interpolation=Interpolation.LINEAR,
                normalization_method=Normalization.MAX, centering=Centering.BEAM_CENTER,
-               edge_detection_method=Edge.INFLECTION_HILL, hill_window_ratio=0.05,
+               edge_detection_method=Edge.FWHM, hill_window_ratio=0.05,
                interpolation_resolution_mm=0.5, invert=True)
 
 print(my_img.results())  # print results as a string
 my_img.plot_analyzed_image()  # matplotlib image
-
