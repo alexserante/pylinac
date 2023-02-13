@@ -13,3 +13,4 @@ my_img.analyze(protocol=Protocol.VARIAN, in_field_ratio=0.8, interpolation=Inter
 
 print(my_img.results())  # print results as a string
 my_img.plot_analyzed_image()  # matplotlib image
+
