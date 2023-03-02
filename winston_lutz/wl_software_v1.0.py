@@ -36,13 +36,22 @@ def open_files_path():
 def format_images():
 
     # positions of gantry, col and couch
-    '''gantry = [0, 90, 180, 270, 0, 0, 0, 0]
-    colimator = [0, 0, 0, 0, 90, 270, 0, 0]
-    couch = [0, 0, 0, 0, 0, 0, 90, 270]'''
-
-    gantry = [0, 30, 45, 90, 150, 180, 320, 270, 220, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    colimator = [0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 45, 90, 150, 180, 320, 270, 220, 0, 0, 0, 0, 0, 0]
-    couch = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 45, 90, 330, 315, 270]
+    if not str(var_wl_type.get()):
+        text_console = "Selecione o tipo de WL: Completo ou Básico"
+        message_console(text_console)
+        return
+    else:
+        if str(var_wl_type.get()) == "Completo":
+            gantry = [0, 30, 45, 90, 150, 180, 320, 270, 220,
+                      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            colimator = [0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 45,
+                         90, 150, 180, 320, 270, 220, 0, 0, 0, 0, 0, 0]
+            couch = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 30, 45, 90, 330, 315, 270]
+        if str(var_wl_type.get()) == "Básico":
+            gantry = [0, 90, 180, 270, 0, 0, 0, 0]
+            colimator = [0, 0, 0, 0, 90, 270, 0, 0]
+            couch = [0, 0, 0, 0, 0, 0, 90, 270]
 
     # count the n of files inside directory and check with the expected n
     num_files = 0
@@ -145,11 +154,15 @@ def save_pdf():
 
 
 def save_results():
-    '''shift_vector = [round(wl.bb_shift_vector.x, 3), round(wl.bb_shift_vector.y, 3), round(wl.bb_shift_vector.z, 3)]
+    shift_vector = [round(wl.bb_shift_vector.x, 3), round(wl.bb_shift_vector.y, 3), round(wl.bb_shift_vector.z, 3)]
     with open("L:/Radioterapia/Fisicos/Controle_Qualidade/WL/AL06_WL.txt", "w") as f:
         for a in shift_vector:
-            f.write(str(a))'''
-    pass
+            f.write(str(a) + " ")
+    f.close()
+
+    # show message in console
+    text_console = "Resultados salvos!"
+    message_console(text_console)
 
 
 # ########################################################################### #
@@ -179,10 +192,10 @@ lbl_wl_type = tk.Label(master=frm_select_folder,
 
 var_wl_type = StringVar()
 rbtn_wl_type_1 = tk.Radiobutton(
-    master=frm_select_folder, text="Completo",
+    master=frm_select_folder, text="Completo \n(23 imagens)",
     variable=var_wl_type, value="Completo").grid(row=3, column=0)
 rbtn_wl_type_2 = tk.Radiobutton(
-    master=frm_select_folder, text="Básico",
+    master=frm_select_folder, text="Básico \n(8 imagens)",
     variable=var_wl_type, value="Básico").grid(row=3, column=1)
 
 btn_format_images = tk.Button(master=frm_select_folder,

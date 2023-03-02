@@ -2,8 +2,11 @@ from tkinter import *
 
 
 def sel():
-    print("You selected the option " + str(var.get()))
-
+    text = str(var.get())
+    if not text:
+        print("Select an option")
+    else:
+        print("You selected the option " + text)
 
 
 root = Tk()
