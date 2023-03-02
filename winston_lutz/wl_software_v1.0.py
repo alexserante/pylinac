@@ -37,7 +37,7 @@ def format_images():
 
     # positions of gantry, col and couch
     if not str(var_wl_type.get()):
-        text_console = "Selecione o tipo de WL: Completo ou Básico"
+        text_console = "Selecione o tipo de WL: Completo ou Simples"
         message_console(text_console)
         return
     else:
@@ -48,7 +48,7 @@ def format_images():
                          90, 150, 180, 320, 270, 220, 0, 0, 0, 0, 0, 0]
             couch = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                      0, 0, 0, 0, 0, 30, 45, 90, 330, 315, 270]
-        if str(var_wl_type.get()) == "Básico":
+        if str(var_wl_type.get()) == "Simples":
             gantry = [0, 90, 180, 270, 0, 0, 0, 0]
             colimator = [0, 0, 0, 0, 90, 270, 0, 0]
             couch = [0, 0, 0, 0, 0, 0, 90, 270]
@@ -109,6 +109,25 @@ def format_images():
 def analyze_wl():
 
     global wl
+    global wl_type
+
+    wl_type = "x"
+
+    num_files = 0
+    for folderName, subfolders, filenames in os.walk(main_path):
+        for filename in filenames:
+            if re.search("^gantry", filename):
+                num_files = num_files + 1
+
+            if re.search("^[0-9]+", filename):
+                text_console = "Formatar imagens!"
+                message_console(text_console)
+                return
+
+    if num_files == 8:
+        wl_type = "Simples"
+    if num_files == 23:
+        wl_type = "Completo"
 
     # use_filenames=True necessary to get angles from the name of the files
     wl = WinstonLutz(main_path, use_filenames=True)
@@ -159,6 +178,7 @@ def save_results():
 
     with open("L:/Radioterapia/Fisicos/Controle_Qualidade/WL/AL06_WL.txt", "a") as f:
         f.write(datetime.today().strftime("%Y%m%d") + " ")
+        f.write(wl_type + " ")
         for a in shift_vector:
             f.write(str(a) + " ")
         f.write("\n")
@@ -198,8 +218,8 @@ rbtn_wl_type_1 = tk.Radiobutton(
     master=frm_select_folder, text="Completo \n(23 imagens)",
     variable=var_wl_type, value="Completo").grid(row=3, column=0)
 rbtn_wl_type_2 = tk.Radiobutton(
-    master=frm_select_folder, text="Básico \n(8 imagens)",
-    variable=var_wl_type, value="Básico").grid(row=3, column=1)
+    master=frm_select_folder, text="Simples \n(8 imagens)",
+    variable=var_wl_type, value="Simples").grid(row=3, column=1)
 
 btn_format_images = tk.Button(master=frm_select_folder,
                               text="Formatar imagens",
