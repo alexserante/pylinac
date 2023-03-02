@@ -155,10 +155,11 @@ def save_pdf():
 
 def save_results():
     shift_vector = [round(wl.bb_shift_vector.x, 3), round(wl.bb_shift_vector.y, 3), round(wl.bb_shift_vector.z, 3)]
-    with open("L:/Radioterapia/Fisicos/Controle_Qualidade/WL/AL06_WL.txt", "w") as f:
+    with open("L:/Radioterapia/Fisicos/Controle_Qualidade/WL/AL06_WL.txt", "a") as f:
+        f.write(datetime.today().strftime("%Y%m%d") + " ")
         for a in shift_vector:
             f.write(str(a) + " ")
-    f.close()
+        f.write("\n")
 
     # show message in console
     text_console = "Resultados salvos!"
