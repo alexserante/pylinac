@@ -1,8 +1,8 @@
-from pylinac import FieldAnalysis, Protocol, Centering, Edge, Normalization, Interpolation
+from pylinac import FieldProfileAnalysis, Centering, Edge, Normalization
 
-my_file = r"C:\Users\a.serante\Desktop\temp\6FFF_23x23_5MU.dcm"
+my_file = r"G:\ONCORAD\Física Médica\Controles de Qualidade\1 Testes Mensais\FieldAnalysis\6FFF_23x23_5MU.dcm"
 #  my_img = FieldAnalysis(path=my_file) # no filter apllied to the image
-my_img = FieldAnalysis(path=my_file, filter=5)
+my_img = FieldProfileAnalysis(path=my_file, filter=5)
 
 '''my_img.analyze(
     protocol=Protocol.VARIAN,
@@ -29,4 +29,4 @@ my_img.analyze(
 
 
 print(my_img.results())  # print results as a string
-my_img.plot_analyzed_image()  # matplotlib image
+my_img.plot_analyzed_images()  # matplotlib image
