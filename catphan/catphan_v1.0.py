@@ -37,8 +37,12 @@ def analyze_catphan():
 
 	# show message in console
 	text_console = "Análise concluída!"
-
 	message_console(text_console)
+
+	# show message with the selected path
+	lbl_results.config(text=catphan.results())
+	#lbl_shift_bb.config(text="Mover: " + wl.bb_shift_instructions())
+
 	print(catphan.results())
 	catphan.plot_analyzed_image()
 
@@ -75,6 +79,19 @@ frm_perform_analysis.grid(row=0, column=1, padx=10, pady=5)
 btn_perform_analysis = tk.Button(
     master=frm_perform_analysis, text="Fazer análise WL", font="VERDANA",
     command=analyze_catphan).grid(row=0, column=0, padx=10, pady=5)
+
+# RIGHT FRAME
+frm_right = tk.Frame(master=window)
+frm_right.grid(row=0, column=1, sticky="n")
+
+# Results frame
+frm_results = tk.LabelFrame(
+    master=frm_right, width=435, height=250, text="Resultados", font="VERDANA")
+frm_results.grid(row=0, column=0, sticky='n')
+frm_results.grid_propagate(0)
+
+lbl_results = tk.Label(master=frm_results)
+lbl_results.grid(row=0, column=0)
 
 
 # Console frame
