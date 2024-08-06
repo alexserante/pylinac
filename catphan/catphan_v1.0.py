@@ -30,7 +30,7 @@ def open_files_path():
 	    # print("Caminho selecionado: " + main_path)
 	    text_console = "Caminho selecionado: " + main_path
 	    message_console(text_console)
-	    btn_perform_analysis['state'] = tk.NORMAL
+	    self.btn_perform_analysis['state'] = NORMAL
 
 def analyze_catphan():
 	global catphan
@@ -83,7 +83,7 @@ frm_perform_analysis.grid(row=1, column=0, padx=10, pady=5)
 
 btn_perform_analysis = tk.Button(
     master=frm_perform_analysis, text="Fazer análise", font="VERDANA",
-    command=analyze_catphan, state=tk.DISABLED).grid(row=0, column=0, padx=10, pady=5)
+    command=analyze_catphan, state=DISABLED).grid(row=0, column=0, padx=10, pady=5)
 
 btn_show_images = tk.Button(
     master=frm_perform_analysis, text="Plotar imagens", font="VERDANA",
