@@ -30,8 +30,11 @@ def open_files_path():
 	    # print("Caminho selecionado: " + main_path)
 	    text_console = "Caminho selecionado: " + main_path
 	    message_console(text_console)
+	    btn_perform_analysis['state'] = tk.NORMAL
 
 def analyze_catphan():
+	global catphan
+
 	catphan = CatPhan503(main_path)
 	catphan.analyze()
 
@@ -39,14 +42,16 @@ def analyze_catphan():
 	text_console = "Análise concluída!"
 	message_console(text_console)
 
-	# show message with the selected path
+	# show message in the results frame
 	lbl_results.config(text=catphan.results())
-	#lbl_shift_bb.config(text="Mover: " + wl.bb_shift_instructions())
 
 	print(catphan.results())
+
+def show_images():
 	catphan.plot_analyzed_image()
 
-	#cbct.publish_pdf("catphan_M20", open_file=True)
+def save_pdf():
+	cbct.publish_pdf("catphan")
 
 
 # ########################################################################### #
@@ -74,11 +79,15 @@ btn_select_folder = tk.Button(master=frm_select_folder,
 # Analysis frame
 frm_perform_analysis = tk.LabelFrame(
     master=frm_left, text="Análise Catphan", font="VERDANA")
-frm_perform_analysis.grid(row=0, column=1, padx=10, pady=5)
+frm_perform_analysis.grid(row=1, column=0, padx=10, pady=5)
 
 btn_perform_analysis = tk.Button(
-    master=frm_perform_analysis, text="Fazer análise WL", font="VERDANA",
-    command=analyze_catphan).grid(row=0, column=0, padx=10, pady=5)
+    master=frm_perform_analysis, text="Fazer análise", font="VERDANA",
+    command=analyze_catphan, state=tk.DISABLED).grid(row=0, column=0, padx=10, pady=5)
+
+btn_show_images = tk.Button(
+    master=frm_perform_analysis, text="Plotar imagens", font="VERDANA",
+    command=show_images).grid(row=1, column=0, padx=10, pady=5)
 
 # RIGHT FRAME
 frm_right = tk.Frame(master=window)
@@ -86,7 +95,7 @@ frm_right.grid(row=0, column=1, sticky="n")
 
 # Results frame
 frm_results = tk.LabelFrame(
-    master=frm_right, width=435, height=250, text="Resultados", font="VERDANA")
+    master=frm_right, width=380, height=410, text="Resultados", font="VERDANA")
 frm_results.grid(row=0, column=0, sticky='n')
 frm_results.grid_propagate(0)
 
@@ -96,8 +105,8 @@ lbl_results.grid(row=0, column=0)
 
 # Console frame
 frm_console = tk.LabelFrame(
-    master=window, width=100, height=50, text="Console")
-frm_console.grid(row=2, column=0, columnspan=2, sticky="nw", padx=5, pady=20)
+    master=window, width=500, height=50, text="Console")
+frm_console.grid(row=2, column=0, columnspan=3, sticky="nw", padx=5, pady=20)
 
 
 window.mainloop()
