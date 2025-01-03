@@ -1,6 +1,6 @@
 from pylinac import CatPhan503
 
-my_folder = r"C:\Users\a.serante\Desktop\temp\catphan"
+my_folder = r"C:\Users\a.serante\Desktop\CQIGRTXV\QA_SEMES\CT_catphan"
 
 cbct = CatPhan503(my_folder)
 
