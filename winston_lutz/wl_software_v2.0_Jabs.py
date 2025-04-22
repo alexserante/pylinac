@@ -97,7 +97,6 @@ def format_images():
                     print(f"Erro ao ler {file_path}: {e}")
 
     dicom_infos.sort(key=lambda x: x[1])
-    print(dicom_infos)
 
     n = 0
     for i, (old_path, time) in enumerate(dicom_infos, start=1):
