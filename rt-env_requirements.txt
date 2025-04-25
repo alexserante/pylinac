@@ -17,6 +17,7 @@ matplotlib==3.10.0
 networkx==3.4.2
 numpy==1.26.4
 packaging==24.2
+pandas==2.2.3
 pefile==2023.2.7
 pillow==11.1.0
 plotly==5.24.1
@@ -29,6 +30,7 @@ pyinstaller-hooks-contrib==2024.11
 pylinac==3.30.0
 pyparsing==3.2.1
 python-dateutil==2.9.0.post0
+pytz==2025.2
 pywin32-ctypes==0.2.3
 PyYAML==6.0.2
 quaac==1.0.2
@@ -41,3 +43,4 @@ tenacity==9.0.0
 tifffile==2024.12.12
 tqdm==4.67.1
 typing_extensions==4.12.2
+tzdata==2025.2

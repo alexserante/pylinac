@@ -1,14 +1,37 @@
 from pylinac import WinstonLutz
+import pandas as pd
+import os
 
-my_directory = 'L:/Radioterapia/Fisicos/Controle_Qualidade/WL/WL-AL06/IMAGENS/20221110'
+# Caminho do diretório com imagens do teste
+caminho_imagens = "G:/ONCORAD/Física Médica/Controles de Qualidade/1 Testes Mensais/WinstonLutz/2025/2025-02"
+caminho_excel = "G:/ONCORAD/Física Médica/Controles de Qualidade/1 Testes Mensais/WinstonLutz/NAO_DELETAR_wl_results.xlsx"
 
-wl = WinstonLutz(my_directory, use_filenames=True)
-
+# Carregar e analisar
+wl = WinstonLutz(caminho_imagens)
 wl.analyze(bb_size_mm=8)
+dados = wl.results_data(as_dict=True)
 
+# Remove os dados por imagem
+dados_resumo = {k: v for k, v in dados.items() if k not in ["image_details", "keyed_image_details"]}
 
-pdf_name = my_directory[62:80]
-wl.publish_pdf(pdf_name + '.pdf')
+bb_shift = dados_resumo.pop("bb_shift_vector", None)
+if bb_shift:
+    dados_resumo["bb_shift_x"] = bb_shift.get("x")
+    dados_resumo["bb_shift_y"] = bb_shift.get("y")
+    dados_resumo["bb_shift_z"] = bb_shift.get("z")
 
-# plot all the images
-wl.plot_images()
+# Cria o DataFrame com uma linha
+df = pd.DataFrame([dados_resumo])
+
+print(df)
+
+# Salvar ou adicionar ao Excel existente
+if os.path.exists(caminho_excel):
+    with pd.ExcelWriter(caminho_excel, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
+        sheet = writer.sheets["resultados"]
+        startrow = sheet.max_row
+        df.to_excel(writer, sheet_name="resultados", index=False, header=False, startrow=startrow)
+else:
+    df.to_excel(caminho_excel, sheet_name="resultados", index=False)
+
+print(f"✅ Resultados salvos/adicionados em: {caminho_excel}")

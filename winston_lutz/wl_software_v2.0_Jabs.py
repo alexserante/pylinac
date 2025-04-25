@@ -3,6 +3,7 @@ import os
 import os.path
 import shutil
 import re
+import pandas as pd
 import tkinter as tk
 from tkinter import *
 from tkinter.filedialog import askdirectory
@@ -124,6 +125,7 @@ def analyze_wl():
 
     global wl
     global wl_type
+    global wl_results
 
     wl_type = "x"
 
@@ -147,9 +149,15 @@ def analyze_wl():
     wl = WinstonLutz(main_path, use_filenames=True)
     wl.analyze(bb_size_mm=8)
     print(wl.results())
+
     # show message with the selected path
     lbl_results.config(text=wl.results())
     lbl_shift_bb.config(text="Mover: " + wl.bb_shift_instructions())
+
+    '''wl_results = wl.results_data(as_dict=True)
+    summary = {k: v for k, v in wl_results.items() if k != "image_details" and k != "keyed_image_details"}
+    df_wl_results = pd.DataFrame(summary)
+    print(df_wl_results)'''
 
     # show message in console
     text_console = "Análise concluída!"
@@ -209,6 +217,8 @@ def save_results():
 #                                                                             #
 # ########################################################################### #
 
+global excel_path
+excel_path = r'G:/ONCORAD/Física Médica/Controles de Qualidade/1 Testes Mensais/WinstonLutz/NAO_DELETAR_wl_results.xlsx'
 
 window = tk.Tk()
 
