@@ -57,23 +57,36 @@ def format_images():
 
     # count the n of files inside directory and check with the expected n
     num_files = 0
-    for folderName, subfolders, filenames in os.walk(main_path):
-        for filename in filenames:
-            if re.search("^gantry", filename):
-                # print("Imagens já formatadas!")
+    acquisition_date = set()
+
+    for root, dirs, files in os.walk(main_path):
+        for file in files:
+            if re.search("^gantry", file):
                 text_console = "Imagens já formatadas!"
                 message_console(text_console)
-                return
-            if re.search("^[0-9]+", filename):
+                raise ValueError("Imagens já formatadas!")
+            if re.search("^[0-9]+", file):
                 # print('FILE INSIDE ' + folderName + ': ' + filename)
-                num_files = num_files + 1
-    print(num_files)
+                filePath = os.path.join(root, file)
+                ds = pydicom.dcmread(filePath, stop_before_pixels=True)
+                if (0x0008, 0x0020) in ds:
+                    acquisition_date.add(ds[0x0008, 0x0020].value)
+                    num_files = num_files + 1
+                else:
+                    raise ValueError(f"A imagem {file}, não contém a tag (0008, 0020) de data.")
 
+    # check if the dates of images are the same
+    if len(acquisition_date) != 1:
+        raise ValueError(f"As imagens possuem datas diferentes: {acquisition_date}. Análise cancelada.")
+    else:
+        acquisition_date = acquisition_date.pop()
+        print(f"{num_files} imagens carregadas. Todas do dia {acquisition_date}.")
+
+    # check n of files with lenght of array gantry
     if num_files != len(gantry):
         text_console = "Número de imagens incorreto!"
         message_console(text_console)
-        # print("Número de imagens incorreto!")
-        return
+        raise ValueError("Número de imagens incorreto!")
 
     # move the files to the main path
     dicom_infos = []
@@ -107,7 +120,7 @@ def format_images():
         print(f"{os.path.basename(old_path)} -> {new_name}")
         n += 1
 
-    print(f"\n✅ Todos os arquivos foram renomeados e copiados para: {main_path}")
+    print(f"\nTodos os arquivos foram renomeados e copiados para: {main_path}")
 
     # delete empty folders
     folders = list(os.walk(main_path, topdown=False))
@@ -119,6 +132,31 @@ def format_images():
     # show message concluded
     text_console = "Formatação das imagens concluída"
     message_console(text_console)
+
+
+def check_images_date():
+    global images_date
+    acquisition_date = set()
+    num_files = 0
+
+    for root, dirs, files in os.walk(main_path):
+        for file in files:
+            filePath = os.path.join(root, file)
+            ds = pydicom.dcmread(filePath, stop_before_pixels=True)
+            if (0x0008, 0x0020) in ds:
+                acquisition_date.add(ds[0x0008, 0x0020].value)
+                num_files = num_files + 1
+            else:
+                raise ValueError(f"A imagem {file}, não contém a tag (0008, 0020) de data.")
+
+    # check if the dates of images are the same
+    if len(acquisition_date) != 1:
+        raise ValueError(f"As imagens possuem datas diferentes: {acquisition_date}. Análise cancelada.")
+    else:
+        acquisition_date = acquisition_date.pop()
+        print(f"{num_files} imagens carregadas. Todas do dia {acquisition_date}.")
+
+    images_date = next(iter(acquisition_date))
 
 
 def analyze_wl():
@@ -145,6 +183,8 @@ def analyze_wl():
     if num_files == 23:
         wl_type = "Completo"
 
+    check_images_date()
+
     # use_filenames=True necessary to get angles from the name of the files
     wl = WinstonLutz(main_path, use_filenames=True)
     wl.analyze(bb_size_mm=8)
@@ -154,10 +194,33 @@ def analyze_wl():
     lbl_results.config(text=wl.results())
     lbl_shift_bb.config(text="Mover: " + wl.bb_shift_instructions())
 
-    '''wl_results = wl.results_data(as_dict=True)
-    summary = {k: v for k, v in wl_results.items() if k != "image_details" and k != "keyed_image_details"}
-    df_wl_results = pd.DataFrame(summary)
-    print(df_wl_results)'''
+    data = wl.results_data(as_dict=True)
+
+    print(wl.bb_shift_instructions())
+    print(wl.results_data(as_dict=True)["bb_shift_vector"])
+    print(wl.results())
+
+    # 3. Build the summary
+    summary_data = {k: v for k, v in data.items() if k not in ["image_details", "keyed_image_details"]}
+
+    # Separate and add the BB shift vector
+    bb_shift = summary_data.pop("bb_shift_vector", None)
+    if bb_shift:
+        summary_data["bb_shift_x_mm"] = round(bb_shift.get("x", 0), 2)
+        summary_data["bb_shift_y_mm"] = round(bb_shift.get("y", 0), 2)
+        summary_data["bb_shift_z_mm"] = round(bb_shift.get("z", 0), 2)
+
+    # Add new information
+    summary_data["images_date"] = datetime.strptime(images_date, "%Y%m%d").strftime("%Y-%m-%d")
+    summary_data["execution_datetime"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    summary_data["source_folder"] = os.path.basename(dicom_folder)
+    summary_data["number_of_images"] = image_counter
+
+    # Create the DataFrame
+    # Ensure 'image_date' is the first column
+    df = pd.DataFrame([summary_data])
+    columns_order = ["image_date"] + [col for col in df.columns if col != "image_date"]
+    df = df[columns_order]
 
     # show message in console
     text_console = "Análise concluída!"
@@ -189,6 +252,17 @@ def save_pdf():
     dem_dict['Autor'] = name_var.get()
     dem_dict['Acelerador'] = acelerator_var.get()
     wl.publish_pdf(filename=path, metadata=dem_dict)
+
+    # Salvar ou adicionar ao Excel existente
+    if os.path.exists(excel_path):
+        with pd.ExcelWriter(excel_path, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
+            sheet = writer.sheets["resultados"]
+            startrow = sheet.max_row
+            df.to_excel(writer, sheet_name="resultados", index=False, header=False, startrow=startrow)
+    else:
+        df.to_excel(excel_path, sheet_name="resultados", index=False)
+
+    print(f"Resultados salvos/adicionados em: {excel_path}")
 
     # show message in console
     text_console = "PDF salvo em: " + path

@@ -9,19 +9,25 @@ caminho_excel = "G:/ONCORAD/Física Médica/Controles de Qualidade/1 Testes Mens
 # Carregar e analisar
 wl = WinstonLutz(caminho_imagens)
 wl.analyze(bb_size_mm=8)
-dados = wl.results_data(as_dict=True)
 
-# Remove os dados por imagem
-dados_resumo = {k: v for k, v in dados.items() if k not in ["image_details", "keyed_image_details"]}
+data = wl.results_data(as_dict=True)
 
-bb_shift = dados_resumo.pop("bb_shift_vector", None)
+print(wl.bb_shift_instructions())
+print(wl.results_data(as_dict=True)["bb_shift_vector"])
+print(wl.results())
+
+# 3. Build the summary
+summary_data = {k: v for k, v in data.items() if k not in ["image_details", "keyed_image_details"]}
+
+# Separate and add the BB shift vector
+bb_shift = summary_data.pop("bb_shift_vector", None)
 if bb_shift:
-    dados_resumo["bb_shift_x"] = bb_shift.get("x")
-    dados_resumo["bb_shift_y"] = bb_shift.get("y")
-    dados_resumo["bb_shift_z"] = bb_shift.get("z")
+    summary_data["bb_shift_x_mm"] = round(bb_shift.get("x", 0), 2)
+    summary_data["bb_shift_y_mm"] = round(bb_shift.get("y", 0), 2)
+    summary_data["bb_shift_z_mm"] = round(bb_shift.get("z", 0), 2)
 
 # Cria o DataFrame com uma linha
-df = pd.DataFrame([dados_resumo])
+df = pd.DataFrame([summary_data])
 
 print(df)
 
@@ -34,4 +40,4 @@ if os.path.exists(caminho_excel):
 else:
     df.to_excel(caminho_excel, sheet_name="resultados", index=False)
 
-print(f"✅ Resultados salvos/adicionados em: {caminho_excel}")
+print(f"Resultados salvos/adicionados em: {caminho_excel}")
