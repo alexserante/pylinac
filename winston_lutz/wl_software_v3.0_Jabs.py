@@ -9,6 +9,7 @@ from tkinter import *
 from tkinter.filedialog import askdirectory
 from pylinac import WinstonLutz  # pylinac==3.5.0
 from datetime import datetime
+from pydicom.misc import is_dicom
 
 
 # Function to show messages in the console as labels in the Console Label Frame
@@ -124,12 +125,13 @@ def check_images_date():
     for root, dirs, files in os.walk(main_path):
         for file in files:
             filePath = os.path.join(root, file)
-            ds = pydicom.dcmread(filePath, stop_before_pixels=True)
-            if (0x0008, 0x0020) in ds:
-                acquisition_date.add(ds[0x0008, 0x0020].value)
-                n_files += 1
-            else:
-                raise ValueError(f"A imagem {file}, não contém a tag (0008, 0020) de data.")
+            if is_dicom(filePath):
+                ds = pydicom.dcmread(filePath, stop_before_pixels=True)
+                if (0x0008, 0x0020) in ds:
+                    acquisition_date.add(ds[0x0008, 0x0020].value)
+                    n_files += 1
+                else:
+                    raise ValueError(f"A imagem {file}, não contém a tag (0008, 0020) de data.")
 
     # check if the dates of images are the same
     if len(acquisition_date) != 1:
@@ -208,11 +210,13 @@ def save_pdf():
     dem_dict['Acelerador'] = acelerator_var.get()
     wl.publish_pdf(filename=path, metadata=dem_dict)
 
-    data = wl.results_data(as_dict=True)
+    # show message in console
+    text_console = "PDF salvo em: " + path
+    message_console(text_console)
 
-    print(wl.bb_shift_instructions())
-    print(wl.results_data(as_dict=True)["bb_shift_vector"])
-    print(wl.results())
+
+def save_results():
+    data = wl.results_data(as_dict=True)
 
     # 3. Build the summary
     summary_data = {k: v for k, v in data.items() if k not in ["image_details", "keyed_image_details"]}
@@ -225,7 +229,7 @@ def save_pdf():
         summary_data["bb_shift_z_mm"] = round(bb_shift.get("z", 0), 2)
 
     # Add new information
-    summary_data["images_date"] = datetime.strptime(images_date, "%Y%m%d").strftime("%Y-%m-%d")
+    summary_data["images_date"] = datetime.strptime(images_date, "%Y%m%d").strftime("%d/%m/%Y")
 
     # Create the DataFrame
     # Ensure 'image_date' is the first column
@@ -244,21 +248,7 @@ def save_pdf():
 
     print(f"Resultados salvos/adicionados em: {excel_path}")
 
-    # show message in console
-    text_console = "PDF salvo em: " + path
-    message_console(text_console)
-
-
-def save_results():
-    shift_vector = [round(wl.bb_shift_vector.x, 3), round(
-        wl.bb_shift_vector.y, 3), round(wl.bb_shift_vector.z, 3)]
-
-    with open("L:/Radioterapia/Fisicos/Controle_Qualidade/WL/AL06_WL.txt", "a") as f:
-        f.write(datetime.today().strftime("%Y%m%d") + " ")
-        f.write(wl_type + " ")
-        for a in shift_vector:
-            f.write(str(a) + " ")
-        f.write("\n")
+    df.to_csv(txt_path, sep="\t", index=False, mode="a", header=False)
 
     # show message in console
     text_console = "Resultados salvos!"
@@ -273,6 +263,9 @@ def save_results():
 
 global excel_path
 excel_path = r'G:/ONCORAD/Física Médica/Controles de Qualidade/1 Testes Mensais/WinstonLutz/NAO_DELETAR_wl_results.xlsx'
+global txt_path
+txt_path = r'G:/ONCORAD/Física Médica/Controles de Qualidade/1 Testes Mensais/WinstonLutz/NAO_DELETAR_wl_results.txt'
+
 
 window = tk.Tk()
 
