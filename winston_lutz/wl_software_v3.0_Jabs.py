@@ -60,7 +60,7 @@ def format_images():
     num_files = 0
     dicom_infos = []
 
-    for root, folderName, files in os.walk(main_path):
+    for folderName, _, files in os.walk(main_path):
         for filename in files:
             print('FILE INSIDE ' + folderName + ': ' + filename)
 
@@ -74,9 +74,9 @@ def format_images():
 
             if re.search("^[0-9]+", filename):
                 # print('FILE INSIDE ' + folderName + ': ' + filename)
-                filePath = os.path.join(root, filename)
+                file_path = os.path.join(folderName, filename)
                 try:
-                    ds = pydicom.dcmread(filePath, stop_before_pixels=True)
+                    ds = pydicom.dcmread(file_path, stop_before_pixels=True)
                     if (0x0008, 0x0020) in ds:
                         file_time = ds[0x0008, 0x0030].value
                         file_time_formated = datetime.strptime(file_time.split('.')[0], "%H%M%S")
