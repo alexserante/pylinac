@@ -52,9 +52,9 @@ def format_images():
             couch = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                      0, 0, 0, 0, 0, 30, 45, 90, 330, 315, 270]
         if str(var_wl_type.get()) == "Simples":
-            gantry = [0, 0, 0, 90, 180, 270, 0, 0]
-            colimator = [0, 90, 270, 0, 0, 0, 0, 0]
-            couch = [0, 0, 0, 0, 0, 0, 270, 90]
+            gantry = [0, 0, 0, 90, 180, 270, 0, 0, 0, 0]
+            colimator = [0, 90, 270, 0, 0, 0, 0, 0, 0, 0]
+            couch = [0, 0, 0, 0, 0, 0, 315, 270, 45, 90]
 
     # count the n of files inside directory and check with the expected n
     num_files = 0
