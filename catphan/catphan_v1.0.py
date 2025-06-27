@@ -1,10 +1,8 @@
 import tkinter as tk
 from tkinter import *
-from tkinter.filedialog import askdirectory
+from tkinter.filedialog import askdirectory, askopenfilename
 from datetime import datetime
-from pylinac import (
-    CatPhan503, LeedsTOR, ElektaLasVegas
-)
+from pylinac import CatPhan503, LeedsTOR, ElektaLasVegas
 
 
 # Function to show messages in the console as labels in the Console Label Frame
@@ -33,6 +31,8 @@ def analyze_catphan():
     catphan = CatPhan503(main_path)
     catphan.analyze()
 
+    print(catphan.results())
+
     # show message in console
     text_console = "Análise concluída!"
     message_console(text_console)
@@ -41,26 +41,36 @@ def analyze_catphan():
     lbl_results.config(text=catphan.results())
     # show images
     catphan.plot_analyzed_image()
-
-    print(catphan.results())
 
 
 def analyze_leedstor():
-    global leedstor
+    global leeds
+    global file_path
 
-    leedstor = LeedsTOR(main_path)
-    catphan.analyze()
+    # user select the directory of the images
+    file_path = askopenfilename(title='Select dcm file')
+    if not file_path:
+        text_console = "Nenhum arquivo selecionado!"
+        message_console(text_console)
+        return
+    else:
+        # print("Caminho selecionado: " + file_path)
+        text_console = "Arquivo selecionado: " + file_path
+        message_console(text_console)
+
+    leeds = LeedsTOR(file_path)
+    leeds.analyze()
 
     # show message in console
     text_console = "Análise concluída!"
     message_console(text_console)
 
     # show message in the results frame
-    lbl_results.config(text=catphan.results())
+    lbl_results.config(text=leeds.results())
     # show images
-    catphan.plot_analyzed_image()
+    leeds.plot_analyzed_image()
 
-    print(catphan.results())
+    print(leeds.results())
 
 
 def save_pdf():
@@ -102,7 +112,7 @@ frm_leedstor = tk.LabelFrame(
 frm_leedstor.grid(row=1, column=0, padx=10, pady=5)
 
 btn_analysis_leedstor = tk.Button(
-    master=frm_leedstor, text="CatPhan503", font="VERDANA",
+    master=frm_leedstor, text="LeedsTOR", font="VERDANA",
     command=analyze_leedstor).grid(row=0, column=0, padx=10, pady=5)
 
 
