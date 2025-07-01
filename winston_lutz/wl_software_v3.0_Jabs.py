@@ -38,26 +38,15 @@ def open_files_path():
 
 def format_images():
 
-    # positions of gantry, col and couch
-    if not str(var_wl_type.get()):
-        text_console = "Selecione o tipo de WL: Completo ou Simples"
-        message_console(text_console)
-        return
-    else:
-        if str(var_wl_type.get()) == "Completo":
-            gantry = [220, 270, 300, 45, 90, 160, 180, 0,
-                      0, 0, 0, 0, 0, 0, 0,
-                      0, 0, 0, 0]
-            colimator = [0, 0, 0, 0, 0, 0, 0, 0,
-                         45, 90, 120, 180, 300, 270, 220,
-                         0, 0, 0, 0]
-            couch = [0, 0, 0, 0, 0, 0, 0, 0,
-                     0, 0, 0, 0, 0, 0, 0,
-                     45, 90, 315, 270]
-        if str(var_wl_type.get()) == "Simples":
-            gantry = [0, 0, 0, 90, 180, 270, 0, 0, 0, 0]
-            colimator = [0, 90, 270, 0, 0, 0, 0, 0, 0, 0]
-            couch = [0, 0, 0, 0, 0, 0, 315, 270, 45, 90]
+    gantry = [220, 270, 300, 45, 90, 160, 180, 0,
+              0, 0, 0, 0, 0, 0, 0,
+              0, 0, 0, 0]
+    colimator = [0, 0, 0, 0, 0, 0, 0, 0,
+                 45, 90, 120, 180, 300, 270, 220,
+                 0, 0, 0, 0]
+    couch = [0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0,
+             45, 90, 315, 270]
 
     # count the n of files inside directory and check with the expected n
     num_files = 0
@@ -149,11 +138,8 @@ def check_images_date():
 def analyze_wl():
 
     global wl
-    global wl_type
-    global wl_results
+    global wl_shift
     global images_date
-
-    wl_type = "x"
 
     num_files = 0
     for folderName, subfolders, filenames in os.walk(main_path):
@@ -166,11 +152,6 @@ def analyze_wl():
                 message_console(text_console)
                 return
 
-    if num_files == 8:
-        wl_type = "Simples"
-    if num_files == 23:
-        wl_type = "Completo"
-
     images_date = check_images_date()
 
     # use_filenames=True necessary to get angles from the name of the files
@@ -181,6 +162,10 @@ def analyze_wl():
     # show message with the selected path
     lbl_results.config(text=wl.results())
     lbl_shift_bb.config(text="Mover: " + wl.bb_shift_instructions())
+
+    wl_shift = WinstonLutz(main_path, use_filenames=True)
+    wl_shift.analyze(bb_size_mm=8, apply_virtual_shift=True)
+    lbl_results_shift.config(text=wl_shift.results())
 
     # show message in console
     text_console = "Análise concluída!"
@@ -208,20 +193,22 @@ def save_pdf():
     date = datetime.today().strftime("%Y%m%d")
     path = main_path + "/WL-" + date + ".pdf"
 
-    dem_dict = {'Autor': '', 'Acelerador': ''}
+    dem_dict = {'Autor': ''}
     dem_dict['Autor'] = name_var.get()
-    dem_dict['Acelerador'] = acelerator_var.get()
     wl.publish_pdf(filename=path, metadata=dem_dict)
 
     # show message in console
     text_console = "PDF salvo em: " + path
     message_console(text_console)
 
+    # Register results in txt and excel file
+    save_results()
+
 
 def save_results():
     data = wl.results_data(as_dict=True)
 
-    # 3. Build the summary
+    # Build the summary
     summary_data = {k: v for k, v in data.items() if k not in ["image_details", "keyed_image_details"]}
 
     # Separate and add the BB shift vector
@@ -285,21 +272,10 @@ btn_select_folder = tk.Button(master=frm_select_folder,
                               command=open_files_path).grid(row=0, column=0,
                                                             columnspan=2, padx=10, pady=5)
 
-lbl_wl_type = tk.Label(master=frm_select_folder,
-                       text="Tipo WL:").grid(row=1, column=0, sticky="w")
-
-var_wl_type = StringVar()
-rbtn_wl_type_1 = tk.Radiobutton(
-    master=frm_select_folder, text="Completo \n(23 imagens)",
-    variable=var_wl_type, value="Completo").grid(row=3, column=0)
-rbtn_wl_type_2 = tk.Radiobutton(
-    master=frm_select_folder, text="Simples \n(8 imagens)",
-    variable=var_wl_type, value="Simples").grid(row=3, column=1)
-
 btn_format_images = tk.Button(master=frm_select_folder,
                               text="Formatar imagens",
                               font="VERDANA",
-                              command=format_images).grid(row=5, column=0,
+                              command=format_images).grid(row=1, column=0,
                                                           columnspan=2, padx=10, pady=5)
 
 
@@ -334,20 +310,28 @@ frm_right = tk.Frame(master=window)
 frm_right.grid(row=0, column=1, sticky="n")
 
 frm_results = tk.LabelFrame(
-    master=frm_right, width=435, height=250, text="Resultados", font="VERDANA")
-frm_results.grid(row=0, column=3, sticky='n')
+    master=frm_right, width=450, height=260, text="Resultados", font="VERDANA")
+frm_results.grid(row=0, column=0, sticky='n')
 frm_results.grid_propagate(0)
 
 lbl_results = tk.Label(master=frm_results)
 lbl_results.grid(row=0, column=0)
 
 frm_shift_bb = tk.LabelFrame(
-    master=frm_right, width=435, height=50, text="Shift", font="VERDANA")
-frm_shift_bb.grid(row=1, column=3, sticky='n', pady=10)
+    master=frm_right, width=450, height=50, text="Shift", font="VERDANA")
+frm_shift_bb.grid(row=1, column=0, sticky='n', pady=10)
 frm_shift_bb.grid_propagate(0)
 
 lbl_shift_bb = tk.Label(master=frm_shift_bb, text="", fg="Red", font="VERDANA")
 lbl_shift_bb.grid(row=0, column=0)
+
+frm_results_shift = tk.LabelFrame(
+    master=frm_right, width=450, height=270, text="Resultados (setup error corrigido)", font="VERDANA")
+frm_results_shift.grid(row=2, column=0, sticky='n')
+frm_results_shift.grid_propagate(0)
+
+lbl_results_shift = tk.Label(master=frm_results_shift)
+lbl_results_shift.grid(row=0, column=0)
 
 
 frm_save_pdf = tk.LabelFrame(
@@ -359,19 +343,10 @@ acelerator_var = StringVar()
 lbl_name = tk.Label(master=frm_save_pdf, text="Autor: ").grid(row=0, column=0)
 entry_name = tk.Entry(master=frm_save_pdf,
                       textvariable=name_var).grid(row=0, column=1)
-lbl_acelerador = tk.Label(
-    master=frm_save_pdf, text="Acelerador: ").grid(row=1, column=0, rowspan=2, sticky="nw")
-entry_acelerator = tk.Entry(
-    master=frm_save_pdf, textvariable=acelerator_var, width=3).grid(row=1, column=1, rowspan=2, sticky="nw")
 
 btn_save_pdf = tk.Button(
     master=frm_save_pdf, text="Salvar PDF", font="VERDANA",
     command=save_pdf).grid(row=0, column=2, padx=10, pady=2)
-
-btn_save_results = tk.Button(
-    master=frm_save_pdf, text="Registrar resultado", font="VERDANA",
-    command=save_results).grid(row=1, column=2, padx=10, pady=5)
-
 
 # Console frame
 frm_console = tk.LabelFrame(

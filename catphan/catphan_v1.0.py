@@ -72,7 +72,7 @@ def analyze_leedstor():
     filePath = openImage()
 
     leeds = LeedsTOR(filePath)
-    leeds.analyze()
+    leeds.analyze(low_contrast_threshold=0.01, high_contrast_threshold=0.5)
 
     # show message in console
     text_console = "Análise concluída!"
@@ -86,11 +86,32 @@ def analyze_leedstor():
     print(leeds.results())
 
 
+def analyze_lasvegas():
+    global lasvegas
+    global filePath
+
+    filePath = openImage()
+
+    lasvegas = ElektaLasVegas(filePath)
+    lasvegas.analyze(angle_override=-90)
+
+    # show message in console
+    text_console = "Análise concluída!"
+    message_console(text_console)
+
+    # show message in the results frame
+    lbl_results.config(text=lasvegas.results())
+    # show images
+    lasvegas.plot_analyzed_image()
+
+    print(lasvegas.results())
+
+
 def save_pdf_catphan():
     folder_path = mainPath
 
     date = datetime.today().strftime("%Y%m%d")
-    filename = date + "_catphan_" + ".pdf"
+    filename = date + "_Catphan503_" + ".pdf"
 
     full_path = os.path.join(folder_path, filename)
 
@@ -105,11 +126,26 @@ def save_pdf_leedstor():
     folder_path = os.path.dirname(filePath)
 
     date = datetime.today().strftime("%Y%m%d")
-    filename = date + "_leedsTOR_" + ".pdf"
+    filename = date + "_LeedsTOR_" + ".pdf"
 
     full_path = os.path.join(folder_path, filename)
 
     leeds.publish_pdf(filename=full_path)
+
+    # show message in console
+    text_console = "PDF salvo em: " + full_path
+    message_console(text_console)
+
+
+def save_pdf_lasvegas():
+    folder_path = os.path.dirname(filePath)
+
+    date = datetime.today().strftime("%Y%m%d")
+    filename = date + "_LasVegas_" + ".pdf"
+
+    full_path = os.path.join(folder_path, filename)
+
+    lasvegas.publish_pdf(filename=full_path)
 
     # show message in console
     text_console = "PDF salvo em: " + full_path
@@ -155,13 +191,26 @@ btn_save_pdf = tk.Button(
     master=frm_leedstor, text="Salvar PDF", font="VERDANA",
     command=save_pdf_leedstor).grid(row=0, column=1, padx=10, pady=2)
 
+# Elekta Las VEgas
+frm_lasvegas = tk.LabelFrame(
+    master=frm_left, text="Las Vegas", font="VERDANA")
+frm_lasvegas.grid(row=2, column=0, padx=10, pady=5)
+
+btn_analysis_lasvegas = tk.Button(
+    master=frm_lasvegas, text="Selecionar imagem", font="VERDANA",
+    command=analyze_lasvegas).grid(row=0, column=0, padx=10, pady=5)
+
+btn_save_pdf = tk.Button(
+    master=frm_lasvegas, text="Salvar PDF", font="VERDANA",
+    command=save_pdf_lasvegas).grid(row=0, column=1, padx=10, pady=2)
+
 # RIGHT FRAME
 frm_right = tk.Frame(master=window)
 frm_right.grid(row=0, column=1, sticky="n")
 
 # Results frame
 frm_results = tk.LabelFrame(
-    master=frm_right, width=380, height=410, text="Resultados", font="VERDANA")
+    master=frm_right, width=500, height=450, text="Resultados", font="VERDANA")
 frm_results.grid(row=0, column=0, sticky='n')
 frm_results.grid_propagate(0)
 
