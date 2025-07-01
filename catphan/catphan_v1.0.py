@@ -1,8 +1,11 @@
 import tkinter as tk
+import os
 from tkinter import *
 from tkinter.filedialog import askdirectory, askopenfilename
 from datetime import datetime
-from pylinac import CatPhan503, LeedsTOR, ElektaLasVegas
+from pylinac import (
+    CatPhan503, LeedsTOR, ElektaLasVegas
+)
 
 
 # Function to show messages in the console as labels in the Console Label Frame
@@ -11,11 +14,21 @@ def message_console(text_console):
     return
 
 
-def analyze_catphan():
-    # necessary to use this variable in other functions
-    global catphan
-    global main_path
+def openImage():
+    # user select the file
+    file_path = askopenfilename(title='Select dcm file')
+    if not file_path:
+        text_console = "Nenhum arquivo selecionado!"
+        message_console(text_console)
+        return
+    else:
+        # print("Caminho selecionado: " + file_path)
+        text_console = "Arquivo selecionado: " + file_path
+        message_console(text_console)
+        return file_path
 
+
+def openPath():
     # user select the directory of the images
     main_path = askdirectory(title='Select folder')
     if not main_path:
@@ -27,8 +40,17 @@ def analyze_catphan():
         # print("Caminho selecionado: " + main_path)
         text_console = "Caminho selecionado: " + main_path
         message_console(text_console)
+        return main_path
 
-    catphan = CatPhan503(main_path)
+
+def analyze_catphan():
+    # necessary to use this variable in other functions
+    global catphan
+    global mainPath
+
+    mainPath = openPath()
+
+    catphan = CatPhan503(mainPath)
     catphan.analyze()
 
     print(catphan.results())
@@ -45,20 +67,11 @@ def analyze_catphan():
 
 def analyze_leedstor():
     global leeds
-    global file_path
+    global filePath
 
-    # user select the directory of the images
-    file_path = askopenfilename(title='Select dcm file')
-    if not file_path:
-        text_console = "Nenhum arquivo selecionado!"
-        message_console(text_console)
-        return
-    else:
-        # print("Caminho selecionado: " + file_path)
-        text_console = "Arquivo selecionado: " + file_path
-        message_console(text_console)
+    filePath = openImage()
 
-    leeds = LeedsTOR(file_path)
+    leeds = LeedsTOR(filePath)
     leeds.analyze()
 
     # show message in console
@@ -73,14 +86,33 @@ def analyze_leedstor():
     print(leeds.results())
 
 
-def save_pdf():
-    date = datetime.today().strftime("%Y%m%d")
-    path = date + "_catphan_" + var_preset_type.get() + ".pdf"
+def save_pdf_catphan():
+    folder_path = mainPath
 
-    catphan.publish_pdf(filename=path)
+    date = datetime.today().strftime("%Y%m%d")
+    filename = date + "_catphan_" + ".pdf"
+
+    full_path = os.path.join(folder_path, filename)
+
+    catphan.publish_pdf(filename=full_path)
 
     # show message in console
-    text_console = "PDF salvo em: " + path
+    text_console = "PDF salvo em: " + full_path
+    message_console(text_console)
+
+
+def save_pdf_leedstor():
+    folder_path = os.path.dirname(filePath)
+
+    date = datetime.today().strftime("%Y%m%d")
+    filename = date + "_leedsTOR_" + ".pdf"
+
+    full_path = os.path.join(folder_path, filename)
+
+    leeds.publish_pdf(filename=full_path)
+
+    # show message in console
+    text_console = "PDF salvo em: " + full_path
     message_console(text_console)
 
 
@@ -99,36 +131,29 @@ frm_left.grid(row=0, column=0, sticky="n")
 # LEFT FRAME
 # CATPHAN
 frm_catphan = tk.LabelFrame(
-    master=frm_left, text="Análise", font="VERDANA")
+    master=frm_left, text="Catphan503", font="VERDANA")
 frm_catphan.grid(row=0, column=0, padx=10, pady=5)
 
 btn_analysis_catphan = tk.Button(
-    master=frm_catphan, text="CatPhan503", font="VERDANA",
+    master=frm_catphan, text="Selecionar diretório", font="VERDANA",
     command=analyze_catphan).grid(row=0, column=0, padx=10, pady=5)
+
+btn_save_pdf = tk.Button(
+    master=frm_catphan, text="Salvar PDF", font="VERDANA",
+    command=save_pdf_catphan).grid(row=0, column=1, padx=10, pady=2)
 
 # LeedsTOR
 frm_leedstor = tk.LabelFrame(
-    master=frm_left, text="Análise", font="VERDANA")
+    master=frm_left, text="LeedsTOR", font="VERDANA")
 frm_leedstor.grid(row=1, column=0, padx=10, pady=5)
 
 btn_analysis_leedstor = tk.Button(
-    master=frm_leedstor, text="LeedsTOR", font="VERDANA",
+    master=frm_leedstor, text="Selecionar imagem", font="VERDANA",
     command=analyze_leedstor).grid(row=0, column=0, padx=10, pady=5)
 
-
-# Save pdf frame
-frm_save_pdf = tk.LabelFrame(
-    master=frm_left, text="Salvar resultados", font="VERDANA")
-frm_save_pdf.grid(row=2, column=0, columnspan=2, padx=20, pady=5, sticky="w")
-
-var_preset_type = StringVar()
-lbl_name = tk.Label(master=frm_save_pdf, text="Preset: ").grid(row=0, column=0)
-entry_name = tk.Entry(master=frm_save_pdf,
-                      textvariable=var_preset_type).grid(row=0, column=1)
-
 btn_save_pdf = tk.Button(
-    master=frm_save_pdf, text="Salvar PDF", font="VERDANA",
-    command=save_pdf).grid(row=0, column=2, padx=10, pady=2)
+    master=frm_leedstor, text="Salvar PDF", font="VERDANA",
+    command=save_pdf_leedstor).grid(row=0, column=1, padx=10, pady=2)
 
 # RIGHT FRAME
 frm_right = tk.Frame(master=window)
