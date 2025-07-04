@@ -231,7 +231,7 @@ lbl_image.grid(row=0, column=0)
 
 btn_analysis_lasvegas = tk.Button(
     master=frm_lasvegas, text="Selecionar imagem", font="VERDANA",
-    command=analyze_lasvegas).grid(row=0, column=0, padx=10, pady=5)
+    command=analyze_lasvegas).grid(row=0, column=1, padx=10, pady=5, columnspan=2)
 
 comment_var = StringVar()
 lbl_comment = tk.Label(master=frm_lasvegas,
@@ -241,7 +241,7 @@ entry_comment = tk.Entry(master=frm_lasvegas,
 
 btn_save_pdf = tk.Button(
     master=frm_lasvegas, text="Salvar PDF", font="VERDANA",
-    command=save_pdf_lasvegas).grid(row=0, column=1, padx=10, pady=2)
+    command=save_pdf_lasvegas).grid(row=1, column=2, padx=10, pady=2)
 
 # RIGHT FRAME
 frm_right = tk.Frame(master=window)
