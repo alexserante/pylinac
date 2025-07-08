@@ -1,6 +1,8 @@
+import pydicom
 import sys
 import tkinter as tk
 import os
+import pandas as pd
 from tkinter import *
 from tkinter.filedialog import askdirectory, askopenfilename
 from datetime import datetime
@@ -8,6 +10,7 @@ from PIL import Image, ImageTk
 from pylinac import (
     CatPhan503, LeedsTOR, ElektaLasVegas
 )
+from pydicom.misc import is_dicom
 
 
 def resource_path(relative_path):
@@ -36,32 +39,19 @@ def openImage():
         return file_path
 
 
-def openPath():
-    # user select the directory of the images
-    main_path = askdirectory(title='Select folder')
-    if not main_path:
-        # print("Nenhuma pasta selecionada!")
-        text_console = "Nenhuma pasta selecionada!"
-        message_console(text_console)
-        return
-    else:
-        # print("Caminho selecionado: " + main_path)
-        text_console = "Caminho selecionado: " + main_path
-        message_console(text_console)
-        return main_path
-
-
 def analyze_catphan():
     # necessary to use this variable in other functions
     global catphan
     global mainPath
+    global filePath
 
-    mainPath = openPath()
+    filePath = openImage()
+    mainPath = os.path.dirname(filePath)
 
     catphan = CatPhan503(mainPath)
     catphan.analyze()
 
-    print(catphan.results())
+    print(catphan.results(as_list=True))
 
     # show message in console
     text_console = "Análise concluída!"
@@ -114,6 +104,9 @@ def analyze_lasvegas():
 
 
 def save_pdf_catphan():
+    txt_path = r'R:/ONCORAD/Física Médica/Controles de Qualidade/3 Testes Semestrais/NAO_DELETAR_catphan_results.txt'
+    excel_path = r'R:/ONCORAD/Física Médica/Controles de Qualidade/3 Testes Semestrais/NAO_DELETAR_catphan_results.xlsx'
+
     folder_path = mainPath
 
     date = datetime.today().strftime("%Y%m%d")
@@ -127,8 +120,19 @@ def save_pdf_catphan():
     text_console = "PDF salvo em: " + full_path
     message_console(text_console)
 
+    if is_dicom(filePath):
+        ds = pydicom.dcmread(filePath, stop_before_pixels=True)
+        if (0x0008, 0x0020) in ds:
+            image_date = ds[0x0008, 0x0020].value
+
+    data = catphan.results(as_list=True)
+    register_results(data, image_date, txt_path, excel_path)
+
 
 def save_pdf_leedstor():
+    txt_path = r'R:/ONCORAD/Física Médica/Controles de Qualidade/3 Testes Semestrais/NAO_DELETAR_leedstor_results.txt'
+    excel_path = r'R:/ONCORAD/Física Médica/Controles de Qualidade/3 Testes Semestrais/NAO_DELETAR_leedstor_results.xlsx'
+
     folder_path = os.path.dirname(filePath)
 
     date = datetime.today().strftime("%Y%m%d")
@@ -142,8 +146,19 @@ def save_pdf_leedstor():
     text_console = "PDF salvo em: " + full_path
     message_console(text_console)
 
+    if is_dicom(filePath):
+        ds = pydicom.dcmread(filePath, stop_before_pixels=True)
+        if (0x0008, 0x0020) in ds:
+            image_date = ds[0x0008, 0x0020].value
+
+    data = leeds.results(as_list=True)
+    register_results(data, image_date, txt_path, excel_path)
+
 
 def save_pdf_lasvegas():
+    txt_path = r'R:/ONCORAD/Física Médica/Controles de Qualidade/3 Testes Semestrais/NAO_DELETAR_lasvegas_results.txt'
+    excel_path = r'R:/ONCORAD/Física Médica/Controles de Qualidade/3 Testes Semestrais/NAO_DELETAR_lasvegas_results.xlsx'
+
     folder_path = os.path.dirname(filePath)
 
     date = datetime.today().strftime("%Y%m%d")
@@ -157,6 +172,49 @@ def save_pdf_lasvegas():
     text_console = "PDF salvo em: " + full_path
     message_console(text_console)
 
+    if is_dicom(filePath):
+        ds = pydicom.dcmread(filePath, stop_before_pixels=True)
+        if (0x0008, 0x0020) in ds:
+            image_date = ds[0x0008, 0x0020].value
+
+    data = lasvegas.results(as_list=True)
+    register_results(data, image_date, txt_path, excel_path)
+
+
+def register_results(data, image_date, txt_path, excel_path):
+    # Build the summary
+    summary_data = {}
+
+    for item in data:
+        if ":" in item:
+            key, value = item.split(":", 1)
+            summary_data[key.strip()] = value.strip()
+
+    # Add new information
+    summary_data["image_date"] = datetime.strptime(image_date, "%Y%m%d").strftime("%d/%m/%Y")
+    summary_data["comment"] = comment_var_leedstor.get()
+
+    # Create the DataFrame
+    # Ensure 'image_date' is the first column
+    df = pd.DataFrame([summary_data])
+    columns_order = ["image_date"] + [col for col in df.columns if col != "image_date"]
+    df = df[columns_order]
+
+    # Salvar ou adicionar ao Excel existente
+    if os.path.exists(excel_path):
+        with pd.ExcelWriter(excel_path, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
+            sheet = writer.sheets["resultados"]
+            startrow = sheet.max_row
+            df.to_excel(writer, sheet_name="resultados", index=False, header=True, startrow=startrow)
+    else:
+        df.to_excel(excel_path, sheet_name="resultados", index=False)
+
+    df.to_csv(txt_path, sep="\t", index=False, mode="a", header=True)
+
+    # show message in console
+    text_console = "Resultados salvos!"
+    message_console(text_console)
+
 
 # ########################################################################### #
 #                                                                             #
@@ -164,6 +222,7 @@ def save_pdf_lasvegas():
 #                                                                             #
 # ########################################################################### #
 
+global txt_path
 
 window = tk.Tk()
 
@@ -182,14 +241,14 @@ lbl_image = tk.Label(frm_catphan, image=image_catphan_for_tk)
 lbl_image.grid(row=0, column=0)
 
 btn_analysis_catphan = tk.Button(
-    master=frm_catphan, text="Selecionar diretório", font="VERDANA",
+    master=frm_catphan, text="Selecionar imagem", font="VERDANA",
     command=analyze_catphan).grid(row=0, column=1, padx=10, pady=5, columnspan=2)
 
-comment_var = StringVar()
+comment_var_catphan = StringVar()
 lbl_comment = tk.Label(master=frm_catphan,
                        text="Comentário: ").grid(row=1, column=0, sticky='e')
 entry_comment = tk.Entry(master=frm_catphan,
-                         textvariable=comment_var).grid(row=1, column=1)
+                         textvariable=comment_var_catphan).grid(row=1, column=1)
 
 btn_save_pdf = tk.Button(
     master=frm_catphan, text="Salvar PDF", font="VERDANA",
@@ -209,11 +268,11 @@ btn_analysis_leedstor = tk.Button(
     master=frm_leedstor, text="Selecionar imagem", font="VERDANA",
     command=analyze_leedstor).grid(row=0, column=1, padx=10, pady=5, columnspan=2)
 
-comment_var = StringVar()
+comment_var_leedstor = StringVar()
 lbl_comment = tk.Label(master=frm_leedstor,
                        text="Comentário: ").grid(row=1, column=0, sticky='e')
 entry_comment = tk.Entry(master=frm_leedstor,
-                         textvariable=comment_var).grid(row=1, column=1)
+                         textvariable=comment_var_leedstor).grid(row=1, column=1)
 
 btn_save_pdf = tk.Button(
     master=frm_leedstor, text="Salvar PDF", font="VERDANA",
@@ -233,11 +292,11 @@ btn_analysis_lasvegas = tk.Button(
     master=frm_lasvegas, text="Selecionar imagem", font="VERDANA",
     command=analyze_lasvegas).grid(row=0, column=1, padx=10, pady=5, columnspan=2)
 
-comment_var = StringVar()
+comment_var_lasvegas = StringVar()
 lbl_comment = tk.Label(master=frm_lasvegas,
                        text="Comentário: ").grid(row=1, column=0, sticky='e')
 entry_comment = tk.Entry(master=frm_lasvegas,
-                         textvariable=comment_var).grid(row=1, column=1)
+                         textvariable=comment_var_lasvegas).grid(row=1, column=1)
 
 btn_save_pdf = tk.Button(
     master=frm_lasvegas, text="Salvar PDF", font="VERDANA",
