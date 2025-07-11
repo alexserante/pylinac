@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 # Caminho do diretório com imagens do teste
 # Substitua com o caminho correto do arquivo
-txt_path = "G:/ONCORAD/Física Médica/Controles de Qualidade/1 Testes Mensais/WinstonLutz/NAO_DELETAR_wl_results.txt"
+txt_path = "R:/ONCORAD/Física Médica/Controles de Qualidade/1 Testes Mensais/WinstonLutz/NAO_DELETAR_wl_results.txt"
 
 # Carregar os dados
 df = pd.read_csv(txt_path, sep="\t")
@@ -55,7 +55,7 @@ fig, axs = plt.subplots(4, 1, figsize=(10, 20))
 
 # Iterando sobre cada conjunto de dados e títulos
 for i, (cols, title) in enumerate(plots):
-    axs[i].plot(df["images_date"], df[cols])
+    axs[i].plot(df["images_date"], df[cols], marker='o', linestyle='-')
     axs[i].set_xlabel("images_date")
     axs[i].set_ylabel("Valor")
     axs[i].set_title(title)
