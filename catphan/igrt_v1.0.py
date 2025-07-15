@@ -100,8 +100,6 @@ def analyze_lasvegas():
     # show images
     lasvegas.plot_analyzed_image()
 
-    print(lasvegas.results())
-
 
 def save_pdf_catphan():
     txt_path = r'R:/ONCORAD/Física Médica/Controles de Qualidade/3 Testes Semestrais/NAO_DELETAR_catphan_results.txt'
@@ -120,13 +118,13 @@ def save_pdf_catphan():
     text_console = "PDF salvo em: " + full_path
     message_console(text_console)
 
-    if is_dicom(filePath):
+    '''if is_dicom(filePath):
         ds = pydicom.dcmread(filePath, stop_before_pixels=True)
         if (0x0008, 0x0020) in ds:
             image_date = ds[0x0008, 0x0020].value
 
     data = catphan.results(as_list=True)
-    register_results(data, image_date, txt_path, excel_path)
+    register_results(data, image_date, txt_path, excel_path)'''
 
 
 def save_pdf_leedstor():
@@ -146,13 +144,13 @@ def save_pdf_leedstor():
     text_console = "PDF salvo em: " + full_path
     message_console(text_console)
 
-    if is_dicom(filePath):
+    '''if is_dicom(filePath):
         ds = pydicom.dcmread(filePath, stop_before_pixels=True)
         if (0x0008, 0x0020) in ds:
             image_date = ds[0x0008, 0x0020].value
 
     data = leeds.results(as_list=True)
-    register_results(data, image_date, txt_path, excel_path)
+    register_results(data, image_date, txt_path, excel_path)'''
 
 
 def save_pdf_lasvegas():
@@ -172,13 +170,13 @@ def save_pdf_lasvegas():
     text_console = "PDF salvo em: " + full_path
     message_console(text_console)
 
-    if is_dicom(filePath):
+    '''if is_dicom(filePath):
         ds = pydicom.dcmread(filePath, stop_before_pixels=True)
         if (0x0008, 0x0020) in ds:
             image_date = ds[0x0008, 0x0020].value
 
     data = lasvegas.results(as_list=True)
-    register_results(data, image_date, txt_path, excel_path)
+    register_results(data, image_date, txt_path, excel_path)'''
 
 
 def register_results(data, image_date, txt_path, excel_path):
