@@ -181,20 +181,6 @@ def show_plots():
     wl.plot_location()
 
 
-def save_pdf():
-    date = datetime.today().strftime("%Y%m%d")
-    path = main_path + "/WL-" + var_energy_type.get() + "_" + date + ".pdf"
-
-    wl.publish_pdf(filename=path)
-
-    # show message in console
-    text_console = "PDF salvo em: " + path
-    message_console(text_console)
-
-    # Register results in txt and excel file
-    save_results()
-
-
 def save_results():
     # Selecionar feixe utilizado para o teste
     if not str(var_energy_type.get()):
@@ -206,6 +192,15 @@ def save_results():
             excel_path = r'R:/ONCORAD/Física Médica/Controles de Qualidade/1 Testes Mensais/WinstonLutz/NAO_DELETAR_wl_results_6MV.xlsx'
         if str(var_energy_type.get()) == "6FFF":
             excel_path = r'R:/ONCORAD/Física Médica/Controles de Qualidade/1 Testes Mensais/WinstonLutz/NAO_DELETAR_wl_results_6FFF.xlsx'
+
+    date = datetime.today().strftime("%Y%m%d")
+    path = main_path + "/WL-" + var_energy_type.get() + "_" + date + ".pdf"
+
+    wl.publish_pdf(filename=path)
+
+    # show message in console
+    text_console = "PDF salvo em: " + path
+    message_console(text_console)
 
     data = wl.results_data(as_dict=True)
 
@@ -243,86 +238,6 @@ def save_results():
     # show message in console
     text_console = "Resultados salvos!"
     message_console(text_console)
-
-
-'''def show_trend():
-    # Selecionar feixe utilizado para o teste
-    if not str(var_energy_trend.get()):
-        text_console = "Selecione o feixe para mostrar o histórico"
-        message_console(text_console)
-        return
-    else:
-        if str(var_energy_trend.get()) == "6MV":
-            txt_path = r'R:/ONCORAD/Física Médica/Controles de Qualidade/1 Testes Mensais/WinstonLutz/NAO_DELETAR_wl_results_6MV.txt'
-        if str(var_energy_trend.get()) == "6FFF":
-            txt_path = r'R:/ONCORAD/Física Médica/Controles de Qualidade/1 Testes Mensais/WinstonLutz/NAO_DELETAR_wl_results_6FFF.txt'
-
-    # Carregar os dados
-    df = pd.read_csv(txt_path, sep="\t")
-
-    images_date
-    pylinac_version
-    date_of_analysis
-    warnings
-    max_2d_cax_to_bb_mm
-    median_2d_cax_to_bb_mm
-    mean_2d_cax_to_bb_mm
-    max_2d_cax_to_epid_mm
-    median_2d_cax_to_epid_mm
-    mean_2d_cax_to_epid_mm
-    gantry_3d_iso_diameter_mm
-    coll_2d_iso_diameter_mm
-    couch_2d_iso_diameter_mm
-    gantry_coll_3d_iso_diameter_mm
-    num_total_images
-    num_gantry_images
-    num_coll_images
-    num_couch_images
-    num_gantry_coll_images
-    max_gantry_rms_deviation_mm
-    max_epid_rms_deviation_mm
-    max_coll_rms_deviation_mm
-    max_couch_rms_deviation_mm
-    bb_shift_x_mm
-    bb_shift_y_mm
-    bb_shift_z_mm
-
-    # Lista de dados para plotar e seus respectivos títulos
-    plots = [
-        (["max_2d_cax_to_bb_mm", "median_2d_cax_to_bb_mm", "mean_2d_cax_to_bb_mm"],
-         "Resultados de CAX"),
-
-        (["gantry_3d_iso_diameter_mm", "max_gantry_rms_deviation_mm"],
-         "Resultados de Gantry"),
-
-        (["coll_2d_iso_diameter_mm", "max_coll_rms_deviation_mm"],
-         "Resultados de Collimador"),
-
-        (["couch_2d_iso_diameter_mm", "max_couch_rms_deviation_mm"],
-         "Resultados de Couch"),
-    ]
-
-    # Criando a figura com 5 subgráficos
-    fig, axs = plt.subplots(4, 1, figsize=(10, 20))
-    fig.suptitle("Resultados de " + var_energy_trend.get(), fontsize=16, fontweight='bold')
-
-    # Iterando sobre cada conjunto de dados e títulos
-    for i, (cols, title) in enumerate(plots):
-        axs[i].plot(df["images_date"], df[cols], marker='o', linestyle='-')
-        axs[i].set_xlabel("images_date")
-        axs[i].set_ylabel("Resultado (mm)")
-        axs[i].set_title(title)
-        axs[i].legend(cols, loc="upper left", bbox_to_anchor=(1.05, 1))
-        axs[i].grid()
-
-        axs[i].tick_params(axis='x', rotation=45)
-
-        if i != 3:
-            axs[i].tick_params(labelbottom=False)  # Remove os rótulos do eixo X nos gráficos acima
-
-    # Ajustando o layout para evitar sobreposição
-    plt.tight_layout(pad=6.0)
-    plt.show()'''
 
 
 # ########################################################################### #
@@ -415,7 +330,7 @@ rbtn_wl_type_2 = tk.Radiobutton(
 
 btn_save_pdf = tk.Button(
     master=frm_save_pdf, text="Salvar PDF", font="VERDANA",
-    command=save_pdf).grid(row=2, column=0, padx=10, pady=10, columnspan=2)
+    command=save_results).grid(row=2, column=0, padx=10, pady=10, columnspan=2)
 
 comment_var = tk.StringVar()
 lbl_comment = tk.Label(master=frm_save_pdf, text="Comentário: ").grid(row=3, column=0, sticky='e')
@@ -424,22 +339,6 @@ entry_name = tk.Entry(master=frm_save_pdf,
 lbl_comment2 = tk.Label(
     master=frm_save_pdf, text="(caso queira adicionar um \ncomentário ao teste executado)").grid(
     row=4, column=0, columnspan=2)
-
-'''frm_show_trend = tk.LabelFrame(
-    master=frm_left, text="Histórico de resultados", font="VERDANA")
-frm_show_trend.grid(row=3, column=0, columnspan=2, padx=20, pady=5)
-
-var_energy_trend = tk.StringVar()
-rbtn_wl_type_1 = tk.Radiobutton(
-    master=frm_show_trend, text="6MV",
-    variable=var_energy_trend, value="6MV").grid(row=0, column=0, sticky='e')
-rbtn_wl_type_2 = tk.Radiobutton(
-    master=frm_show_trend, text="6FFF",
-    variable=var_energy_trend, value="6FFF").grid(row=0, column=1, sticky='w')
-
-btn_show_trend = tk.Button(
-    master=frm_show_trend, text="Mostrar histórico de resultados", font="VERDANA",
-    command=show_trend).grid(row=1, column=0, padx=10, pady=10, columnspan=2)'''
 
 # Console frame
 frm_console = tk.LabelFrame(
