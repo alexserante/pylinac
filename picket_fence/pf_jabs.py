@@ -42,11 +42,16 @@ def analyze_pf():
     pf = PicketFence(file_path, mlc=MLC.AGILITY)
     pf.analyze(tolerance=0.5, action_tolerance=0.3)
     print(pf.results())
+    print(pf.results_data(as_dict=True)['picket_widths'])
     pf.plot_analyzed_image(show_text=True)
 
     # show message in console
     text_console = "Análise concluída!"
     message_console(text_console)
+
+
+def show_histogram():
+    pf.plot_histogram()
 
 
 # ########################################################################### #
@@ -70,6 +75,12 @@ btn_select_folder = tk.Button(master=frm_select_folder,
                               text="Selecionar arquivo", font="VERDANA",
                               command=open_files_path).grid(row=0, column=0,
                                                             columnspan=2, padx=10, pady=5)
+
+btn_plot_hist = tk.Button(master=frm_select_folder,
+                          text="Mostrar histograma", font="VERDANA",
+                          command=show_histogram).grid(row=1, column=0,
+                                                       columnspan=2, padx=10, pady=5)
+
 
 # Console frame
 frm_console = tk.LabelFrame(
