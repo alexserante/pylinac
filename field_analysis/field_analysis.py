@@ -1,13 +1,7 @@
-
-import pydicom
-import os
-import shutil
-import re
-import pandas as pd
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
 from pylinac import (
-    FieldProfileAnalysis, Interpolation,
+    FieldProfileAnalysis,
     Centering, Edge, Normalization
 )
 from pylinac.metrics.profile import (
@@ -16,8 +10,6 @@ from pylinac.metrics.profile import (
     SymmetryAreaMetric,
     FlatnessDifferenceMetric,
 )
-from datetime import datetime
-from pydicom.misc import is_dicom
 
 
 # Function to show messages in the console as labels in the Console Label Frame
