@@ -40,7 +40,7 @@ def analyze_pf():
 
     # use_filenames=True necessary to get angles from the name of the files
     pf = PicketFence(file_path, mlc=MLC.AGILITY)
-    pf.analyze(tolerance=0.5, action_tolerance=0.3)
+    pf.analyze(tolerance=0.5, action_tolerance=0.25)
     print(pf.results())
     print(pf.results_data(as_dict=True)['picket_widths'])
     pf.plot_analyzed_image(show_text=True)
