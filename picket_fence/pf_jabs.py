@@ -38,7 +38,6 @@ def analyze_pf():
 
     #mlc_agility = MLCArrangement(leaf_arrangement=[(40, 5)])
 
-    # use_filenames=True necessary to get angles from the name of the files
     pf = PicketFence(file_path, mlc=MLC.AGILITY)
     pf.analyze(tolerance=0.5, action_tolerance=0.25)
     print(pf.results())
