@@ -1,4 +1,5 @@
 import tkinter as tk
+import traceback
 from tkinter.filedialog import askopenfilename
 from pylinac import (
     FieldProfileAnalysis,
@@ -7,8 +8,10 @@ from pylinac import (
 from pylinac.metrics.profile import (
     PenumbraLeftMetric,
     PenumbraRightMetric,
-    SymmetryAreaMetric,
+    SymmetryPointDifferenceMetric,
     FlatnessDifferenceMetric,
+    CAXToLeftEdgeMetric,
+    CAXToRightEdgeMetric
 )
 
 
@@ -41,21 +44,29 @@ def analyze_field():
     global fa
 
     fa = FieldProfileAnalysis(file_path)
-    fa.analyze(
-        x_width=0.02,
-        y_width=0.02,
-        normalization=Normalization.BEAM_CENTER,
-        centering=Centering.BEAM_CENTER,
-        edge_type=Edge.INFLECTION_DERIVATIVE,
-        invert=True,
-        ground=True,
-        metrics=(
-            PenumbraLeftMetric(),
-            PenumbraRightMetric(),
-            SymmetryAreaMetric(),
-            FlatnessDifferenceMetric(),
-        ),
-    )
+    try:
+        fa.analyze(
+            x_width=0.05,
+            y_width=0.05,
+            normalization=Normalization.GEOMETRIC_CENTER,
+            centering=Centering.GEOMETRIC_CENTER,
+            edge_type=Edge.INFLECTION_HILL,
+            hill_window_ratio=0.08,
+            invert=True,
+            ground=True,
+            metrics=(
+                PenumbraLeftMetric(),
+                PenumbraRightMetric(),
+                SymmetryPointDifferenceMetric(),
+                FlatnessDifferenceMetric(),
+                CAXToLeftEdgeMetric(),
+                CAXToRightEdgeMetric()
+            ),
+        )
+    except Exception as e:
+        traceback.print_exc()
+        return
+
     print(fa.results())
     fa.plot_analyzed_images(show_grid=True)
 
