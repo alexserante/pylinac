@@ -48,10 +48,9 @@ def analyze_field():
         fa.analyze(
             x_width=0.05,
             y_width=0.05,
-            normalization=Normalization.GEOMETRIC_CENTER,
-            centering=Centering.GEOMETRIC_CENTER,
-            edge_type=Edge.INFLECTION_HILL,
-            hill_window_ratio=0.08,
+            normalization=Normalization.BEAM_CENTER,
+            centering=Centering.BEAM_CENTER,
+            edge_type=Edge.INFLECTION_DERIVATIVE,
             invert=True,
             ground=True,
             metrics=(
