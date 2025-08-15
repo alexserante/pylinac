@@ -3,17 +3,15 @@ from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
 import traceback
 import tempfile
-import os
-
 import numpy as np
 import pydicom
-
 from pylinac import FieldProfileAnalysis, Centering, Edge, Normalization
 from pylinac.metrics.profile import (
     PenumbraLeftMetric, PenumbraRightMetric,
     SymmetryPointDifferenceMetric, FlatnessDifferenceMetric,
     CAXToLeftEdgeMetric, CAXToRightEdgeMetric
 )
+
 
 fa = None
 file_path = None
@@ -37,11 +35,9 @@ def detect_beam_is_dark(img):
 
 def get_beam_center(img):
     """Return (yc, xc) index of beam peak (bright or dark)."""
-    arr = img.astype(float)
-    if detect_beam_is_dark(arr):
-        arr = arr.max() - arr
-    idx = np.argmax(arr)
-    yc, xc = np.unravel_index(idx, arr.shape)
+    h, w = img.shape
+    yc = h / 2
+    xc = w / 2
     return int(yc), int(xc)
 
 
@@ -169,9 +165,12 @@ def analyze_field():
             invert=True,                       # set True only if beam is dark overall
             ground=True,
             metrics=(
-                SymmetryPointDifferenceMetric(in_field_ratio=0.5),
-                FlatnessDifferenceMetric(in_field_ratio=0.5),
-                CAXToLeftEdgeMetric(), CAXToRightEdgeMetric(),
+                SymmetryPointDifferenceMetric(),
+                FlatnessDifferenceMetric(),
+                PenumbraLeftMetric(),
+                PenumbraRightMetric(),
+                CAXToLeftEdgeMetric(),
+                CAXToRightEdgeMetric(),
             ),
         )
     except Exception as e:
