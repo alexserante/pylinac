@@ -36,10 +36,10 @@ def open_files_path():
 def analyze_pf():
     global pf
 
-    #mlc_agility = MLCArrangement(leaf_arrangement=[(40, 5)])
-
-    pf = PicketFence(file_path, mlc=MLC.AGILITY)
-    pf.analyze(tolerance=0.5, action_tolerance=0.25,sag_adjustment=5)
+    pf = PicketFence(file_path, mlc=MLC.AGILITY,
+                     crop_mm=5)
+    pf.analyze(tolerance=0.5, action_tolerance=0.25,
+               sag_adjustment=5)
     print(pf.results())
     print(pf.results_data(as_dict=True)['picket_widths'])
     pf.plot_analyzed_image(show_text=True)
