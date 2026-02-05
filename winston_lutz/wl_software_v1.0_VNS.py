@@ -113,22 +113,6 @@ def analyze_wl():
 
     wl_type = "x"
 
-    num_files = 0
-    for folderName, subfolders, filenames in os.walk(main_path):
-        for filename in filenames:
-            if re.search("^gantry", filename):
-                num_files = num_files + 1
-
-            if re.search("^[0-9]+", filename):
-                text_console = "Formatar imagens!"
-                message_console(text_console)
-                return
-
-    if num_files == 8:
-        wl_type = "Simples"
-    if num_files == 23:
-        wl_type = "Completo"
-
     # use_filenames=True necessary to get angles from the name of the files (not necessary to Varian images)
     wl = WinstonLutz(main_path, use_filenames=False)
     wl.analyze(bb_size_mm=5)
