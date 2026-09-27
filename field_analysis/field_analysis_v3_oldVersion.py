@@ -5,12 +5,7 @@ import traceback
 import tempfile
 import numpy as np
 import pydicom
-from pylinac import FieldProfileAnalysis, Centering, Edge, Normalization
-from pylinac.metrics.profile import (
-    PenumbraLeftMetric, PenumbraRightMetric,
-    SymmetryPointDifferenceMetric, FlatnessDifferenceMetric,
-    CAXToLeftEdgeMetric, CAXToRightEdgeMetric
-)
+from pylinac import FieldAnalysis, Centering, Edge, Normalization, Interpolation
 
 
 fa = None
@@ -159,7 +154,7 @@ def analyze_field():
     # ensure averaging band has pixels
     xw, yw = min_band_ratio_from_dicom(path_for_analysis, target_ratio=0.02, min_pixels=3)
 
-    fa = FieldProfileAnalysis(path_for_analysis)
+    fa = FieldAnalysis(path_for_analysis)
     try:
         fa.analyze(
             x_width=xw, y_width=yw,
@@ -168,14 +163,6 @@ def analyze_field():
             edge_type=Edge.INFLECTION_DERIVATIVE,
             invert=True,                       # set True if beam is dark overall
             ground=True,
-            metrics=(
-                SymmetryPointDifferenceMetric(),
-                FlatnessDifferenceMetric(),
-                PenumbraLeftMetric(),
-                PenumbraRightMetric(),
-                CAXToLeftEdgeMetric(),
-                CAXToRightEdgeMetric(),
-            ),
         )
     except Exception as e:
         traceback.print_exc()
@@ -184,7 +171,7 @@ def analyze_field():
         return
 
     print(fa.results())
-    fa.plot_analyzed_images(show_grid=True, mirror="beam")
+    fa.plot_analyzed_image()
     message_console("Análise concluída!")
 
 

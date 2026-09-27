@@ -135,7 +135,7 @@ def analyze_wl():
     global wl_shift
     global images_date
 
-    num_files = 0
+    '''num_files = 0
     for folderName, subfolders, filenames in os.walk(main_path):
         for filename in filenames:
             if re.search("^gantry", filename):
@@ -144,12 +144,12 @@ def analyze_wl():
             if re.search("^[0-9]+", filename):
                 text_console = "Formatar imagens!"
                 message_console(text_console)
-                return
+                return'''
 
     images_date = check_images_date()
 
     # use_filenames=True necessary to get angles from the name of the files
-    wl = WinstonLutz(main_path, use_filenames=True)
+    wl = WinstonLutz(main_path, use_filenames=False)
     wl.analyze(bb_size_mm=8)
     print(wl.results())
 
@@ -157,7 +157,7 @@ def analyze_wl():
     lbl_results.config(text=wl.results())
     lbl_shift_bb.config(text="Mover: " + wl.bb_shift_instructions())
 
-    wl_shift = WinstonLutz(main_path, use_filenames=True)
+    wl_shift = WinstonLutz(main_path, use_filenames=False)
     wl_shift.analyze(bb_size_mm=8, apply_virtual_shift=True)
     lbl_results_shift.config(text=wl_shift.results())
 
