@@ -1,13 +1,6 @@
-import pydicom
-import os
-import shutil
-import re
-import pandas as pd
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
 from pylinac.picketfence import PicketFence, MLC  # pylinac==3.5.0
-from datetime import datetime
-from pydicom.misc import is_dicom
 
 
 # Function to show messages in the console as labels in the Console Label Frame
